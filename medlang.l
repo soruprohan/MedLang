@@ -157,6 +157,12 @@ FLOAT_EXP   {FLOAT_LIT}{EXP}?
                             "[MedLang Error] Line %d: unterminated string literal\n", lineno);
                         lineno++;
                     }
+                    
+\'[^\'\n]\'         {
+                        yylval.ival = yytext[1];
+                        printf("[LIT] Char literal: %c at line %d\n", yytext[1], lineno);
+                        return INT_LITERAL;
+                    }
 
 {ID}                {
                         yylval.sval = strdup(yytext);

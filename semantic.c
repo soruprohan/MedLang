@@ -67,6 +67,15 @@ static int types_compatible(const char *lhs, const char *rhs) {
     if (strcmp(lhs, "MajorOrgan") == 0)
         return strcmp(rhs, "Organ") == 0;
 
+      if (strcmp(lhs, "Cell") == 0)
+        return strcmp(rhs, "Organ") == 0;
+
+    if (strcmp(lhs, "MinorOrgan") == 0)
+        return strcmp(rhs, "Organ") == 0;
+
+    if (strcmp(lhs, "NonPathologic") == 0)
+        return strcmp(rhs, "Organ") == 0;
+
     return 0;
 }
 
@@ -470,7 +479,7 @@ static void analyze(ASTNode *node, Scope *scope,
 
         static const char *builtins[] = {
             "Power","RootCause","AbsDose","RoundDown","RoundUp",
-            "Sine","Cosine","Tangent","IsCritical", NULL
+            "Sine","Cosine","Tangent","IsCritical","Observe","Record", NULL
         };
         int is_builtin = 0;
         for (int i = 0; builtins[i]; i++)

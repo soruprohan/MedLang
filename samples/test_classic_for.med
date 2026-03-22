@@ -9,3 +9,7 @@ Organ sum <: Organ n :> [:
     :]
     Discharge total |
 :]
+
+Admission <: :> [:
+    Organ result =: sum <: 10 :> |
+:]
