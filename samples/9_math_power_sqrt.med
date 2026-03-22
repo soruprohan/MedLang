@@ -1,0 +1,26 @@
+## 9_math_power_sqrt.med
+## Built-in math functions: Power, RootCause, AbsDose, RoundDown, RoundUp
+
+Admission <: :> [:
+    Flow base =: 3 |
+    Flow exp  =: 4 |
+    Flow result =: Power <: base, exp :> |
+    Observe <: "Power(%f, %f) = %f\n", base, exp, result :> |
+
+    Flow num =: 144 |
+    Flow sq =: RootCause <: num :> |
+    Observe <: "RootCause(%f) = %f\n", num, sq :> |
+
+    Flow negative =: DoseMinus 37.6 |
+    Observe <: "AbsDose(%f) = %f\n", negative, AbsDose <: negative :> :> |
+
+    Flow val =: 4.7 |
+    Observe <: "RoundDown(%f) = %f\n", val, RoundDown <: val :> :> |
+    Observe <: "RoundUp(%f)   = %f\n", val, RoundUp <: val :>   :> |
+
+    ## Pythagorean theorem: c = sqrt(a^2 + b^2)
+    Flow a =: 3 |
+    Flow b =: 4 |
+    Flow c =: RootCause <: Power <: a, 2 :> DosePlus Power <: b, 2 :> :> |
+    Observe <: "\nPythagorean: sqrt(%f^2 + %f^2) = %f\n", a, b, c :> |
+:]

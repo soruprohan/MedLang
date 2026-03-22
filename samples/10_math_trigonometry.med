@@ -1,0 +1,34 @@
+## 10_math_trigonometry.med
+## Trigonometric built-ins: Sine, Cosine, Tangent
+
+Admission <: :> [:
+    Observe <: "=== Trigonometry Table ===\n" :> |
+    Observe <: "Angle(deg) | sin       | cos       | tan\n" :> |
+    Observe <: "-----------|-----------|-----------|----------\n" :> |
+
+    ## PI approximation as a Sealed constant
+    Sealed Flow PI =: 3.14159 |
+
+    Cycle <: deg in 0 .. 6 :> [:
+        ## Convert degree step (0..6 maps to 0,30,60,90,120,150,180)
+        Organ angle_deg =: deg DoseMultiply 30 |
+        Flow  angle_rad =: angle_deg DoseMultiply PI DoseDivide 180 |
+
+        Flow s =: Sine    <: angle_rad :> |
+        Flow c =: Cosine  <: angle_rad :> |
+        Flow t =: Tangent <: angle_rad :> |
+
+        Observe <: "%d          | %f  | %f  | %f\n", angle_deg, s, c, t :> |
+    :]
+
+    Observe <: "\n=== Blood Pressure Critical Check ===\n" :> |
+    Organ systolic  =: 155 |
+    Organ diastolic =: 95  |
+    Organ critical  =: IsCritical <: systolic, diastolic :> |
+    Observe <: "Systolic: %d, Diastolic: %d\n", systolic, diastolic :> |
+    Diagnose <: critical :> [:
+        Observe <: "Status: CRITICAL - immediate attention required\n" :> |
+    :] Alternate [:
+        Observe <: "Status: Normal\n" :> |
+    :]
+:]

@@ -1,0 +1,31 @@
+## test_named_params.med
+## Tests named function parameter calls
+## Named arg syntax in MedLang: paramname| expr  (pipe = semicolon)
+
+Organ add <: Organ a, Organ b :> [:
+    Discharge a DosePlus b |
+:]
+
+Organ subtract <: Organ x, Organ y :> [:
+    Discharge x DoseMinus y |
+:]
+
+Admission <: :> [:
+    ## Positional call — baseline
+    Organ r1 =: add <: 10, 3 :> |
+    Observe <: "add(10, 3)          = %d\n", r1 :> |
+
+    ## Named call — same order as params (a first, b second)
+    Organ r2 =: add <: a=: 10, b=: 3 :> |
+    Observe <: "add(a=:10, b=:3)      = %d\n", r2 :> |
+
+   
+    Organ r3 =: subtract <: x=: 15, y=: 4 :> |
+    Observe <: "subtract(x=:15, y=:4) = %d\n", r3 :> |
+
+    ## Reversed — this is where broken named params show up
+    ## Correct:   subtract(y:4, x:15) should give 15-4 = 11
+    ## Positional: subtract(4, 15)    would give  4-15 = -11
+    Organ r4 =: subtract <: y=: 4, x=: 15 :> |
+    Observe <: "subtract(y=:4, x=:15) = %d\n", r4 :> |
+:]

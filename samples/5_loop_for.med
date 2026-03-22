@@ -1,0 +1,25 @@
+## 5_loop_for.med
+## Cycle (for loop) — classic 3-part and range-based
+
+## Classic 3-part Cycle: count down from 5 to 1
+Admission <: :> [:
+
+    Observe <: "--- Countdown (classic for) ---\n" :> |
+    Organ i =: 5 |
+    Cycle <: i =: 5 | i AboveNormal 0 | i =: i DoseMinus 1 :> [:
+        Observe <: "%d\n", i :> |
+    :]
+
+    Observe <: "--- Sum 1 to 10 (range for) ---\n" :> |
+    Organ total =: 0 |
+    Cycle <: j in 1 .. 10 :> [:
+        total =: total DosePlus j |
+    :]
+    Observe <: "Sum of 1 .. 10 = %d\n", total :> |
+
+    Observe <: "--- Multiplication table of 3 ---\n" :> |
+    Cycle <: k in 1 .. 10 :> [:
+        Organ result =: 3 DoseMultiply k |
+        Observe <: "3 x %d = %d\n", k, result :> |
+    :]
+:]

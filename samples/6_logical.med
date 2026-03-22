@@ -1,0 +1,40 @@
+## 6_logical.med
+## Logical operators: Both (&&), Either (||), Negate (!)
+
+Admission <: :> [:
+    Organ systolic  =: 145 |
+    Organ diastolic =: 95  |
+    Organ pulse     =: 88  |
+    Organ fever     =: 0   |
+
+    Observe <: "Systolic : %d mmHg\n", systolic :> |
+    Observe <: "Diastolic: %d mmHg\n", diastolic :> |
+    Observe <: "Pulse    : %d bpm\n",  pulse :> |
+    Observe <: "Fever    : %d\n\n",    fever :> |
+
+    ## Both (AND)
+    Diagnose <: systolic AboveNormal 140 Both diastolic AboveNormal 90 :> [:
+        Observe <: "Result 1: HYPERTENSION detected (Both conditions met)\n" :> |
+    :] Alternate [:
+        Observe <: "Result 1: Blood pressure normal\n" :> |
+    :]
+
+    ## Either (OR)
+    Diagnose <: systolic AboveNormal 140 Either pulse AboveNormal 100 :> [:
+        Observe <: "Result 2: Needs attention (Either condition met)\n" :> |
+    :] Alternate [:
+        Observe <: "Result 2: No concern\n" :> |
+    :]
+
+    ## Negate (NOT)
+    Diagnose <: Negate fever :> [:
+        Observe <: "Result 3: No fever present\n" :> |
+    :] Alternate [:
+        Observe <: "Result 3: Fever detected\n" :> |
+    :]
+
+    ## Combined
+    Diagnose <: systolic AboveNormal 140 Both diastolic AboveNormal 90 Both Negate fever :> [:
+        Observe <: "Result 4: High BP without fever — isolate and monitor\n" :> |
+    :]
+:]

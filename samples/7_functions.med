@@ -1,0 +1,51 @@
+## 7_functions.med
+## User-defined functions — BMI calculator with risk classification
+
+Flow calcBMI <: Flow weight, Flow height :> [:
+    Discharge weight DoseDivide <: height DoseMultiply height :> |
+:]
+
+Organ classifyBMI <: Flow bmi :> [:
+    Diagnose <: bmi BelowNormal 18.5 :> [:
+        Observe <: "Classification: Underweight\n" :> |
+        Discharge 1 |
+    :]
+    Diagnose <: bmi MinSafe 18.5 Both bmi BelowNormal 25.0 :> [:
+        Observe <: "Classification: Normal weight\n" :> |
+        Discharge 2 |
+    :]
+    Diagnose <: bmi MinSafe 25.0 Both bmi BelowNormal 30.0 :> [:
+        Observe <: "Classification: Overweight\n" :> |
+        Discharge 3 |
+    :]
+    Observe <: "Classification: Obese\n" :> |
+    Discharge 4 |
+:]
+
+Admission <: :> [:
+    Observe <: "=== Patient BMI Report ===\n" :> |
+
+    ## Patient 1
+    Flow w1 =: 55 |
+    Flow h1 =: 1.70 |
+    Flow bmi1 =: calcBMI <: w1, h1 :> |
+    Observe <: "\nPatient 1 - Weight: %f kg, Height: %f m\n", w1, h1 :> |
+    Observe <: "BMI: %f\n", bmi1 :> |
+    classifyBMI <: bmi1 :> |
+
+    ## Patient 2
+    Flow w2 =: 90 |
+    Flow h2 =: 1.75 |
+    Flow bmi2 =: calcBMI <: w2, h2 :> |
+    Observe <: "\nPatient 2 - Weight: %f kg, Height: %f m\n", w2, h2 :> |
+    Observe <: "BMI: %f\n", bmi2 :> |
+    classifyBMI <: bmi2 :> |
+
+    ## Patient 3
+    Flow w3 =: 120 |
+    Flow h3 =: 1.68 |
+    Flow bmi3 =: calcBMI <: w3, h3 :> |
+    Observe <: "\nPatient 3 - Weight: %f kg, Height: %f m\n", w3, h3 :> |
+    Observe <: "BMI: %f\n", bmi3 :> |
+    classifyBMI <: bmi3 :> |
+:]

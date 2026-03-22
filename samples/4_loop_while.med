@@ -1,0 +1,18 @@
+## 4_loop_while.med
+## Continuous (while loop) — count even/odd numbers from -5 to 5
+
+Admission <: :> [:
+    Organ number =: DoseMinus 5 |
+
+    Continuous <: number MinSafe 5 :> [:
+        Observe <: "%d", number :> |
+
+        Diagnose <: number DoseMod 2 Match 0 :> [:
+            Observe <: " : is EVEN\n" :> |
+        :] Alternate [:
+            Observe <: " : is ODD\n" :> |
+        :]
+
+        number =: number DosePlus 1 |
+    :]
+:]

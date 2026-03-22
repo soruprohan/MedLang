@@ -124,7 +124,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 21 "medlang.y"
+#line 22 "medlang.y"
 
     int        ival;
     float      fval;

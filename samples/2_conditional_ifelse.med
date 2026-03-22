@@ -1,0 +1,24 @@
+## 2_conditional_ifelse.med
+## Diagnose / Alternate (if / else) — patient triage example
+
+Admission <: :> [:
+    Organ heartRate =: 110 |
+
+    Observe <: "Heart rate: %d bpm\n", heartRate :> |
+
+    Diagnose <: heartRate AboveNormal 100 :> [:
+        Observe <: "Status: TACHYCARDIA - heart rate is too high\n" :> |
+
+        Organ severity =: 0 |
+        Diagnose <: heartRate AboveNormal 150 :> [:
+            severity =: 2 |
+        :] Alternate [:
+            severity =: 1 |
+        :]
+        Observe <: "Severity level: %d\n", severity :> |
+
+    :] Alternate [:
+        Observe <: "Status: NORMAL - heart rate is within range\n" :> |
+        Observe <: "Value: %d\n", heartRate :> |
+    :]
+:]

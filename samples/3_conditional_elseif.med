@@ -1,0 +1,22 @@
+## 3_conditional_elseif.med
+## Chained Diagnose/Alternate (else-if) — grade classifier
+
+Admission <: :> [:
+    Organ marks =: 78 |
+
+    Observe <: "Marks: %d\n", marks :> |
+
+    Diagnose <: marks AboveNormal 0 Both marks BelowNormal 60 :> [:
+        Observe <: "Grade: F\n" :> |
+    :] Alternate Diagnose <: marks MinSafe 60 Both marks BelowNormal 70 :> [:
+        Observe <: "Grade: D\n" :> |
+    :] Alternate Diagnose <: marks MinSafe 70 Both marks BelowNormal 80 :> [:
+        Observe <: "Grade: C\n" :> |
+    :] Alternate Diagnose <: marks MinSafe 80 Both marks BelowNormal 90 :> [:
+        Observe <: "Grade: B\n" :> |
+    :] Alternate Diagnose <: marks MinSafe 90 Both marks MinSafe 100 :> [:
+        Observe <: "Grade: A\n" :> |
+    :] Alternate [:
+        Observe <: "Invalid marks\n" :> |
+    :]
+:]

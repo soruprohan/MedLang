@@ -6,6 +6,7 @@
 #include "symtable.h"
 #include "semantic.h"
 #include "tac.h"
+#include "interp.h"
 
 void yyerror(const char *s);
 int  yylex(void);
@@ -411,7 +412,7 @@ arg
 
 named_arg
     /* named:     patient: expr  */
-    : IDENTIFIER SEMICOLON expr
+    : IDENTIFIER ASSIGN expr
         { $$ = make_arg($1, $3, NULL); }
     /* positional */
     | expr
@@ -543,6 +544,12 @@ int main(int argc, char **argv) {
         tac_print_all();
         tac_free_all();
     }
+    
+    /* --- Phase 5: AST Interpreter --- */  
+    if (ast_root) {
+        printf("[MedLang] Starting interpreter...\n");
+        interp_run(ast_root);
+    }          
 
     return 0;
 }

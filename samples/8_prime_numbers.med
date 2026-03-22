@@ -1,0 +1,30 @@
+## 8_prime_numbers.med
+## Find prime numbers from 2 to 20 using Continuous (while) loops
+
+Organ isPrime <: Organ n :> [:
+    Diagnose <: n BelowNormal 2 :> [:
+        Discharge 0 |
+    :]
+    Organ i =: 2 |
+    Continuous <: i DoseMultiply i MinSafe n :> [:
+        Diagnose <: n DoseMod i Match 0 :> [:
+            Discharge 0 |
+        :]
+        i =: i DosePlus 1 |
+    :]
+    Discharge 1 |
+:]
+
+Admission <: :> [:
+    Observe <: "Prime numbers from 2 to 20:\n" :> |
+
+    Organ num =: 2 |
+    Continuous <: num MinSafe 20 :> [:
+        Diagnose <: isPrime <: num :> :> [:
+            Observe <: "%d is prime\n", num :> |
+        :] Alternate [:
+            Observe <: "%d is not prime\n", num :> |
+        :]
+        num =: num DosePlus 1 |
+    :]
+:]

@@ -1,0 +1,16 @@
+## 1_variables.med
+## Declaring and printing variables of different types
+
+Admission <: :> [:
+    Organ    age      =: 25 |
+    Flow     weight   =: 72.5 |
+    Diabetes height   =: 1.75 |
+    Cell     initial  =: 'M' |
+    Sealed Organ MAX_DOSE =: 500 |
+
+    Observe <: "Age     : %d\n", age :> |
+    Observe <: "Weight  : %f kg\n", weight :> |
+    Observe <: "Height  : %f m\n", height :> |
+    Observe <: "Initial : %c\n", initial :> |
+    Observe <: "Max Dose: %d mg\n", MAX_DOSE :> |
+:]
