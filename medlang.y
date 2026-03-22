@@ -5,6 +5,7 @@
 #include "ast.h"
 #include "symtable.h"
 #include "semantic.h"
+#include "tac.h"
 
 void yyerror(const char *s);
 int  yylex(void);
@@ -505,6 +506,7 @@ void yyerror(const char *s) {
     fprintf(stderr, "[MedLang Error] Line %d: %s\n", lineno, s);
 }
 
+
 /* ============================================================
    main
    ============================================================ */
@@ -527,8 +529,19 @@ int main(int argc, char **argv) {
     /* --- Phase 3: Semantic Analysis --- */
     if (ast_root) {
         int sem_result = analyze_program(ast_root);
-        if (sem_result != 0)
+        if (sem_result != 0) {
+            fprintf(stderr,
+                "[MedLang] Semantic errors found. TAC generation skipped.\n");
             return sem_result;
+        }
+    }
+
+    /* --- Phase 4: TAC Generation --- */
+    if (ast_root) {
+        printf("[MedLang] Starting TAC generation...\n");
+        tac_gen_program(ast_root);
+        tac_print_all();
+        tac_free_all();
     }
 
     return 0;

@@ -1,0 +1,12 @@
+## test_constant_fold.med — Constant folding bonus optimization
+## Expected: PASS, TAC generated
+## In output.tac, constant expressions like 10 DosePlus 5 should appear
+## as folded literals (t0 = 15) rather than t0 = 10 + 5
+
+Admission <: :> [:
+    Organ a =: 10 DosePlus 5 |
+    Organ b =: 20 DoseMinus 8 |
+    Organ c =: 3 DoseMultiply 4 |
+    Organ d =: 10 DoseDivide 2 |
+    Organ e =: 7 DoseMod 3 |
+:]

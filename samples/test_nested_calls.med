@@ -1,0 +1,14 @@
+## test_nested_calls.med — User functions calling other user functions
+## Expected: PASS, TAC generated
+
+Organ double <: Organ n :> [:
+    Discharge n DoseMultiply 2 |
+:]
+
+Organ quadruple <: Organ n :> [:
+    Discharge double <: double <: n :> :> |
+:]
+
+Admission <: :> [:
+    Organ result =: quadruple <: 5 :> |
+:]

@@ -1,0 +1,17 @@
+## test_screening.med — Screening (switch), Result (case), IdiopathicCase (default)
+## Expected: PASS, TAC generated
+
+Admission <: :> [:
+    Organ code =: 2 |
+    Screening <: code :> [:
+        Result 1 |
+            Observe <: "Code is one\n" :> |
+            Terminate |
+        Result 2 |
+            Observe <: "Code is two\n" :> |
+            Terminate |
+        IdiopathicCase |
+            Observe <: "Unknown code\n" :> |
+            Terminate |
+    :]
+:]

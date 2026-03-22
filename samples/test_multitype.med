@@ -1,0 +1,15 @@
+## test_multitype.med — Multiple data types and widening
+## Expected: PASS, TAC generated
+
+Admission <: :> [:
+    Organ i =: 10 |
+    Flow f =: 3 |
+    Diabetes d =: 3 |
+    Diabetes d2 =: f |
+    MajorOrgan big =: 1000000 |
+    MajorOrgan big2 =: i |
+    MinorOrgan small =: 5 |
+    NonPathologic pos =: 255 |
+    Cell ch =: 'A' |
+    Sealed Flow PI =: 3 |
+:]

@@ -76,6 +76,7 @@
 #include "ast.h"
 #include "symtable.h"
 #include "semantic.h"
+#include "tac.h"
 
 void yyerror(const char *s);
 int  yylex(void);
@@ -86,7 +87,7 @@ ASTNode *ast_root = NULL;
 
 
 /* Line 189 of yacc.c  */
-#line 90 "medlang.tab.c"
+#line 91 "medlang.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -198,7 +199,7 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 20 "medlang.y"
+#line 21 "medlang.y"
 
     int        ival;
     float      fval;
@@ -210,7 +211,7 @@ typedef union YYSTYPE
 
 
 /* Line 214 of yacc.c  */
-#line 214 "medlang.tab.c"
+#line 215 "medlang.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -222,7 +223,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 226 "medlang.tab.c"
+#line 227 "medlang.tab.c"
 
 #ifdef short
 # undef short
@@ -566,19 +567,19 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    97,    97,   105,   113,   115,   120,   121,   122,   123,
-     124,   132,   133,   134,   135,   136,   137,   138,   139,   147,
-     149,   154,   156,   161,   163,   172,   174,   183,   185,   194,
-     195,   199,   201,   211,   220,   222,   227,   228,   229,   230,
-     231,   232,   233,   234,   235,   236,   237,   238,   239,   240,
-     241,   242,   244,   259,   261,   270,   279,   281,   290,   292,
-     294,   304,   309,   310,   314,   316,   328,   331,   337,   338,
-     340,   342,   348,   349,   358,   368,   377,   382,   391,   392,
-     396,   398,   408,   413,   416,   425,   430,   439,   448,   449,
-     450,   451,   452,   453,   454,   455,   456,   457,   458,   459,
-     460,   461,   462,   464,   465,   466,   467,   468,   469,   470,
-     471,   479,   480,   481,   482,   483,   484,   485,   486,   487,
-     495
+       0,    98,    98,   106,   114,   116,   121,   122,   123,   124,
+     125,   133,   134,   135,   136,   137,   138,   139,   140,   148,
+     150,   155,   157,   162,   164,   173,   175,   184,   186,   195,
+     196,   200,   202,   212,   221,   223,   228,   229,   230,   231,
+     232,   233,   234,   235,   236,   237,   238,   239,   240,   241,
+     242,   243,   245,   260,   262,   271,   280,   282,   291,   293,
+     295,   305,   310,   311,   315,   317,   329,   332,   338,   339,
+     341,   343,   349,   350,   359,   369,   378,   383,   392,   393,
+     397,   399,   409,   414,   417,   426,   431,   440,   449,   450,
+     451,   452,   453,   454,   455,   456,   457,   458,   459,   460,
+     461,   462,   463,   465,   466,   467,   468,   469,   470,   471,
+     472,   480,   481,   482,   483,   484,   485,   486,   487,   488,
+     496
 };
 #endif
 
@@ -1830,7 +1831,7 @@ yyreduce:
         case 2:
 
 /* Line 1455 of yacc.c  */
-#line 98 "medlang.y"
+#line 99 "medlang.y"
     {
             (yyval.node) = make_program((yyvsp[(1) - (1)].node));
             ast_root = (yyval.node);
@@ -1842,7 +1843,7 @@ yyreduce:
   case 3:
 
 /* Line 1455 of yacc.c  */
-#line 105 "medlang.y"
+#line 106 "medlang.y"
     {
             (yyval.node) = make_program(NULL);
             ast_root = (yyval.node);
@@ -1853,203 +1854,203 @@ yyreduce:
   case 4:
 
 /* Line 1455 of yacc.c  */
-#line 114 "medlang.y"
+#line 115 "medlang.y"
     { (yyval.node) = make_stmt_list((yyvsp[(1) - (1)].node), NULL); ;}
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 116 "medlang.y"
+#line 117 "medlang.y"
     { (yyval.node) = make_stmt_list((yyvsp[(1) - (2)].node), (yyvsp[(2) - (2)].node)); ;}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 120 "medlang.y"
+#line 121 "medlang.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 121 "medlang.y"
+#line 122 "medlang.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 122 "medlang.y"
+#line 123 "medlang.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 123 "medlang.y"
+#line 124 "medlang.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 124 "medlang.y"
+#line 125 "medlang.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 132 "medlang.y"
+#line 133 "medlang.y"
     { (yyval.sval) = "Organ";         ;}
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 133 "medlang.y"
+#line 134 "medlang.y"
     { (yyval.sval) = "Flow";           ;}
     break;
 
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 134 "medlang.y"
+#line 135 "medlang.y"
     { (yyval.sval) = "Diabetes";       ;}
     break;
 
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 135 "medlang.y"
+#line 136 "medlang.y"
     { (yyval.sval) = "Cell";           ;}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 136 "medlang.y"
+#line 137 "medlang.y"
     { (yyval.sval) = "NullTissue";     ;}
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 137 "medlang.y"
+#line 138 "medlang.y"
     { (yyval.sval) = "MajorOrgan";     ;}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 138 "medlang.y"
+#line 139 "medlang.y"
     { (yyval.sval) = "MinorOrgan";     ;}
     break;
 
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 139 "medlang.y"
+#line 140 "medlang.y"
     { (yyval.sval) = "NonPathologic";  ;}
     break;
 
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 148 "medlang.y"
+#line 149 "medlang.y"
     { (yyval.node) = make_decl((yyvsp[(1) - (3)].sval), (yyvsp[(2) - (3)].sval), 0, 0, NULL, lineno); ;}
     break;
 
   case 20:
 
 /* Line 1455 of yacc.c  */
-#line 150 "medlang.y"
+#line 151 "medlang.y"
     { (yyval.node) = make_decl((yyvsp[(1) - (5)].sval), (yyvsp[(2) - (5)].sval), 0, 0, (yyvsp[(4) - (5)].node), lineno); ;}
     break;
 
   case 21:
 
 /* Line 1455 of yacc.c  */
-#line 155 "medlang.y"
+#line 156 "medlang.y"
     { (yyval.node) = make_decl((yyvsp[(2) - (6)].sval), (yyvsp[(3) - (6)].sval), 1, 0, (yyvsp[(5) - (6)].node), lineno); ;}
     break;
 
   case 22:
 
 /* Line 1455 of yacc.c  */
-#line 157 "medlang.y"
+#line 158 "medlang.y"
     { (yyval.node) = make_decl((yyvsp[(2) - (4)].sval), (yyvsp[(3) - (4)].sval), 1, 0, NULL, lineno); ;}
     break;
 
   case 23:
 
 /* Line 1455 of yacc.c  */
-#line 162 "medlang.y"
+#line 163 "medlang.y"
     { (yyval.node) = make_decl((yyvsp[(2) - (4)].sval), (yyvsp[(3) - (4)].sval), 0, 1, NULL, lineno); ;}
     break;
 
   case 24:
 
 /* Line 1455 of yacc.c  */
-#line 164 "medlang.y"
+#line 165 "medlang.y"
     { (yyval.node) = make_decl((yyvsp[(2) - (6)].sval), (yyvsp[(3) - (6)].sval), 0, 1, (yyvsp[(5) - (6)].node), lineno); ;}
     break;
 
   case 25:
 
 /* Line 1455 of yacc.c  */
-#line 173 "medlang.y"
+#line 174 "medlang.y"
     { (yyval.node) = make_func_def("NullTissue", "Admission", (yyvsp[(3) - (7)].param), (yyvsp[(6) - (7)].node), lineno); ;}
     break;
 
   case 26:
 
 /* Line 1455 of yacc.c  */
-#line 175 "medlang.y"
+#line 176 "medlang.y"
     { (yyval.node) = make_func_def("NullTissue", "Admission", (yyvsp[(3) - (6)].param), NULL, lineno); ;}
     break;
 
   case 27:
 
 /* Line 1455 of yacc.c  */
-#line 184 "medlang.y"
+#line 185 "medlang.y"
     { (yyval.node) = make_func_def((yyvsp[(1) - (8)].sval), (yyvsp[(2) - (8)].sval), (yyvsp[(4) - (8)].param), (yyvsp[(7) - (8)].node), lineno); ;}
     break;
 
   case 28:
 
 /* Line 1455 of yacc.c  */
-#line 186 "medlang.y"
+#line 187 "medlang.y"
     { (yyval.node) = make_func_def((yyvsp[(1) - (7)].sval), (yyvsp[(2) - (7)].sval), (yyvsp[(4) - (7)].param), NULL, lineno); ;}
     break;
 
   case 29:
 
 /* Line 1455 of yacc.c  */
-#line 194 "medlang.y"
+#line 195 "medlang.y"
     { (yyval.param) = NULL; ;}
     break;
 
   case 30:
 
 /* Line 1455 of yacc.c  */
-#line 195 "medlang.y"
+#line 196 "medlang.y"
     { (yyval.param) = (yyvsp[(1) - (1)].param); ;}
     break;
 
   case 31:
 
 /* Line 1455 of yacc.c  */
-#line 200 "medlang.y"
+#line 201 "medlang.y"
     { (yyval.param) = (yyvsp[(1) - (1)].param); ;}
     break;
 
   case 32:
 
 /* Line 1455 of yacc.c  */
-#line 202 "medlang.y"
+#line 203 "medlang.y"
     { /* append $3 to end of $1 */
           ParamNode *p = (yyvsp[(1) - (3)].param);
           while (p->next) p = p->next;
@@ -2061,140 +2062,140 @@ yyreduce:
   case 33:
 
 /* Line 1455 of yacc.c  */
-#line 212 "medlang.y"
+#line 213 "medlang.y"
     { (yyval.param) = make_param((yyvsp[(1) - (2)].sval), (yyvsp[(2) - (2)].sval), NULL); ;}
     break;
 
   case 34:
 
 /* Line 1455 of yacc.c  */
-#line 221 "medlang.y"
+#line 222 "medlang.y"
     { (yyval.node) = make_stmt_list((yyvsp[(1) - (1)].node), NULL); ;}
     break;
 
   case 35:
 
 /* Line 1455 of yacc.c  */
-#line 223 "medlang.y"
+#line 224 "medlang.y"
     { (yyval.node) = make_stmt_list((yyvsp[(1) - (2)].node), (yyvsp[(2) - (2)].node)); ;}
     break;
 
   case 36:
 
 /* Line 1455 of yacc.c  */
-#line 227 "medlang.y"
+#line 228 "medlang.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 37:
 
 /* Line 1455 of yacc.c  */
-#line 228 "medlang.y"
+#line 229 "medlang.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 38:
 
 /* Line 1455 of yacc.c  */
-#line 229 "medlang.y"
+#line 230 "medlang.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 39:
 
 /* Line 1455 of yacc.c  */
-#line 230 "medlang.y"
+#line 231 "medlang.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 40:
 
 /* Line 1455 of yacc.c  */
-#line 231 "medlang.y"
+#line 232 "medlang.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 41:
 
 /* Line 1455 of yacc.c  */
-#line 232 "medlang.y"
+#line 233 "medlang.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 42:
 
 /* Line 1455 of yacc.c  */
-#line 233 "medlang.y"
+#line 234 "medlang.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 43:
 
 /* Line 1455 of yacc.c  */
-#line 234 "medlang.y"
+#line 235 "medlang.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 44:
 
 /* Line 1455 of yacc.c  */
-#line 235 "medlang.y"
+#line 236 "medlang.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 45:
 
 /* Line 1455 of yacc.c  */
-#line 236 "medlang.y"
+#line 237 "medlang.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 46:
 
 /* Line 1455 of yacc.c  */
-#line 237 "medlang.y"
+#line 238 "medlang.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 47:
 
 /* Line 1455 of yacc.c  */
-#line 238 "medlang.y"
+#line 239 "medlang.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 48:
 
 /* Line 1455 of yacc.c  */
-#line 239 "medlang.y"
+#line 240 "medlang.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 49:
 
 /* Line 1455 of yacc.c  */
-#line 240 "medlang.y"
+#line 241 "medlang.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 50:
 
 /* Line 1455 of yacc.c  */
-#line 241 "medlang.y"
+#line 242 "medlang.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 51:
 
 /* Line 1455 of yacc.c  */
-#line 242 "medlang.y"
+#line 243 "medlang.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 52:
 
 /* Line 1455 of yacc.c  */
-#line 245 "medlang.y"
+#line 246 "medlang.y"
     {
             yyerrok;
             (yyval.node) = NULL;
@@ -2207,203 +2208,203 @@ yyreduce:
   case 53:
 
 /* Line 1455 of yacc.c  */
-#line 260 "medlang.y"
+#line 261 "medlang.y"
     { (yyval.node) = make_block((yyvsp[(2) - (3)].node), lineno); ;}
     break;
 
   case 54:
 
 /* Line 1455 of yacc.c  */
-#line 262 "medlang.y"
+#line 263 "medlang.y"
     { (yyval.node) = make_block(NULL, lineno); ;}
     break;
 
   case 55:
 
 /* Line 1455 of yacc.c  */
-#line 271 "medlang.y"
+#line 272 "medlang.y"
     { (yyval.node) = make_assign((yyvsp[(1) - (4)].sval), (yyvsp[(3) - (4)].node), lineno); ;}
     break;
 
   case 56:
 
 /* Line 1455 of yacc.c  */
-#line 280 "medlang.y"
+#line 281 "medlang.y"
     { (yyval.node) = make_return((yyvsp[(2) - (3)].node), lineno); ;}
     break;
 
   case 57:
 
 /* Line 1455 of yacc.c  */
-#line 282 "medlang.y"
+#line 283 "medlang.y"
     { (yyval.node) = make_return(NULL, lineno); ;}
     break;
 
   case 58:
 
 /* Line 1455 of yacc.c  */
-#line 291 "medlang.y"
+#line 292 "medlang.y"
     { (yyval.node) = make_if((yyvsp[(3) - (5)].node), (yyvsp[(5) - (5)].node), NULL, lineno); ;}
     break;
 
   case 59:
 
 /* Line 1455 of yacc.c  */
-#line 293 "medlang.y"
+#line 294 "medlang.y"
     { (yyval.node) = make_if((yyvsp[(3) - (7)].node), (yyvsp[(5) - (7)].node), (yyvsp[(7) - (7)].node), lineno); ;}
     break;
 
   case 60:
 
 /* Line 1455 of yacc.c  */
-#line 295 "medlang.y"
+#line 296 "medlang.y"
     { (yyval.node) = make_if((yyvsp[(3) - (7)].node), (yyvsp[(5) - (7)].node), (yyvsp[(7) - (7)].node), lineno); ;}
     break;
 
   case 61:
 
 /* Line 1455 of yacc.c  */
-#line 305 "medlang.y"
+#line 306 "medlang.y"
     { (yyval.node) = make_if((yyvsp[(3) - (7)].node), (yyvsp[(6) - (7)].node), NULL, lineno); /* placeholder */ ;}
     break;
 
   case 62:
 
 /* Line 1455 of yacc.c  */
-#line 309 "medlang.y"
+#line 310 "medlang.y"
     { (yyval.node) = NULL; ;}
     break;
 
   case 63:
 
 /* Line 1455 of yacc.c  */
-#line 310 "medlang.y"
+#line 311 "medlang.y"
     { (yyval.node) = make_stmt_list((yyvsp[(1) - (2)].node), (yyvsp[(2) - (2)].node)); ;}
     break;
 
   case 64:
 
 /* Line 1455 of yacc.c  */
-#line 315 "medlang.y"
+#line 316 "medlang.y"
     { (yyval.node) = make_stmt_list((yyvsp[(2) - (4)].node), (yyvsp[(4) - (4)].node)); ;}
     break;
 
   case 65:
 
 /* Line 1455 of yacc.c  */
-#line 317 "medlang.y"
+#line 318 "medlang.y"
     { (yyval.node) = (yyvsp[(3) - (3)].node); ;}
     break;
 
   case 66:
 
 /* Line 1455 of yacc.c  */
-#line 329 "medlang.y"
+#line 330 "medlang.y"
     { (yyval.node) = make_for((yyvsp[(3) - (9)].node), (yyvsp[(5) - (9)].node), (yyvsp[(7) - (9)].node), (yyvsp[(9) - (9)].node), lineno); ;}
     break;
 
   case 67:
 
 /* Line 1455 of yacc.c  */
-#line 332 "medlang.y"
+#line 333 "medlang.y"
     { (yyval.node) = make_range_loop((yyvsp[(3) - (9)].sval), (yyvsp[(5) - (9)].ival), (yyvsp[(7) - (9)].ival), (yyvsp[(9) - (9)].node), lineno); ;}
     break;
 
   case 68:
 
 /* Line 1455 of yacc.c  */
-#line 337 "medlang.y"
+#line 338 "medlang.y"
     { (yyval.node) = NULL; ;}
     break;
 
   case 69:
 
 /* Line 1455 of yacc.c  */
-#line 339 "medlang.y"
+#line 340 "medlang.y"
     { (yyval.node) = make_assign((yyvsp[(1) - (3)].sval), (yyvsp[(3) - (3)].node), lineno); ;}
     break;
 
   case 70:
 
 /* Line 1455 of yacc.c  */
-#line 341 "medlang.y"
+#line 342 "medlang.y"
     { (yyval.node) = make_decl((yyvsp[(1) - (4)].sval), (yyvsp[(2) - (4)].sval), 0, 0, (yyvsp[(4) - (4)].node), lineno); ;}
     break;
 
   case 71:
 
 /* Line 1455 of yacc.c  */
-#line 343 "medlang.y"
+#line 344 "medlang.y"
     { (yyval.node) = make_decl((yyvsp[(1) - (2)].sval), (yyvsp[(2) - (2)].sval), 0, 0, NULL, lineno); ;}
     break;
 
   case 72:
 
 /* Line 1455 of yacc.c  */
-#line 348 "medlang.y"
+#line 349 "medlang.y"
     { (yyval.node) = NULL; ;}
     break;
 
   case 73:
 
 /* Line 1455 of yacc.c  */
-#line 350 "medlang.y"
+#line 351 "medlang.y"
     { (yyval.node) = make_assign((yyvsp[(1) - (3)].sval), (yyvsp[(3) - (3)].node), lineno); ;}
     break;
 
   case 74:
 
 /* Line 1455 of yacc.c  */
-#line 359 "medlang.y"
+#line 360 "medlang.y"
     { (yyval.node) = make_while((yyvsp[(3) - (5)].node), (yyvsp[(5) - (5)].node), lineno); ;}
     break;
 
   case 75:
 
 /* Line 1455 of yacc.c  */
-#line 369 "medlang.y"
+#line 370 "medlang.y"
     { (yyval.node) = make_do_while((yyvsp[(2) - (7)].node), (yyvsp[(5) - (7)].node), lineno); ;}
     break;
 
   case 76:
 
 /* Line 1455 of yacc.c  */
-#line 378 "medlang.y"
+#line 379 "medlang.y"
     { (yyval.node) = make_func_call("Observe", (yyvsp[(3) - (5)].arg), lineno); ;}
     break;
 
   case 77:
 
 /* Line 1455 of yacc.c  */
-#line 383 "medlang.y"
+#line 384 "medlang.y"
     { (yyval.node) = make_func_call("Record", (yyvsp[(3) - (5)].arg), lineno); ;}
     break;
 
   case 78:
 
 /* Line 1455 of yacc.c  */
-#line 391 "medlang.y"
+#line 392 "medlang.y"
     { (yyval.arg) = NULL; ;}
     break;
 
   case 79:
 
 /* Line 1455 of yacc.c  */
-#line 392 "medlang.y"
+#line 393 "medlang.y"
     { (yyval.arg) = (yyvsp[(1) - (1)].arg); ;}
     break;
 
   case 80:
 
 /* Line 1455 of yacc.c  */
-#line 397 "medlang.y"
+#line 398 "medlang.y"
     { (yyval.arg) = (yyvsp[(1) - (1)].arg); ;}
     break;
 
   case 81:
 
 /* Line 1455 of yacc.c  */
-#line 399 "medlang.y"
+#line 400 "medlang.y"
     { /* append $3 */
           ArgNode *a = (yyvsp[(1) - (3)].arg);
           while (a->next) a = a->next;
@@ -2415,280 +2416,280 @@ yyreduce:
   case 82:
 
 /* Line 1455 of yacc.c  */
-#line 408 "medlang.y"
+#line 409 "medlang.y"
     { (yyval.arg) = (yyvsp[(1) - (1)].arg); ;}
     break;
 
   case 83:
 
 /* Line 1455 of yacc.c  */
-#line 414 "medlang.y"
+#line 415 "medlang.y"
     { (yyval.arg) = make_arg((yyvsp[(1) - (3)].sval), (yyvsp[(3) - (3)].node), NULL); ;}
     break;
 
   case 84:
 
 /* Line 1455 of yacc.c  */
-#line 417 "medlang.y"
+#line 418 "medlang.y"
     { (yyval.arg) = make_arg(NULL, (yyvsp[(1) - (1)].node), NULL); ;}
     break;
 
   case 85:
 
 /* Line 1455 of yacc.c  */
-#line 426 "medlang.y"
+#line 427 "medlang.y"
     { (yyval.node) = make_break(lineno); ;}
     break;
 
   case 86:
 
 /* Line 1455 of yacc.c  */
-#line 431 "medlang.y"
+#line 432 "medlang.y"
     { (yyval.node) = make_continue(lineno); ;}
     break;
 
   case 87:
 
 /* Line 1455 of yacc.c  */
-#line 440 "medlang.y"
+#line 441 "medlang.y"
     { (yyval.node) = (yyvsp[(1) - (2)].node); ;}
     break;
 
   case 88:
 
 /* Line 1455 of yacc.c  */
-#line 448 "medlang.y"
+#line 449 "medlang.y"
     { (yyval.node) = make_binop(PLUS,     (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node), lineno); ;}
     break;
 
   case 89:
 
 /* Line 1455 of yacc.c  */
-#line 449 "medlang.y"
+#line 450 "medlang.y"
     { (yyval.node) = make_binop(MINUS,    (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node), lineno); ;}
     break;
 
   case 90:
 
 /* Line 1455 of yacc.c  */
-#line 450 "medlang.y"
+#line 451 "medlang.y"
     { (yyval.node) = make_binop(MULTIPLY, (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node), lineno); ;}
     break;
 
   case 91:
 
 /* Line 1455 of yacc.c  */
-#line 451 "medlang.y"
+#line 452 "medlang.y"
     { (yyval.node) = make_binop(DIVIDE,   (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node), lineno); ;}
     break;
 
   case 92:
 
 /* Line 1455 of yacc.c  */
-#line 452 "medlang.y"
+#line 453 "medlang.y"
     { (yyval.node) = make_binop(MOD,      (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node), lineno); ;}
     break;
 
   case 93:
 
 /* Line 1455 of yacc.c  */
-#line 453 "medlang.y"
+#line 454 "medlang.y"
     { (yyval.node) = make_binop(EQ,       (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node), lineno); ;}
     break;
 
   case 94:
 
 /* Line 1455 of yacc.c  */
-#line 454 "medlang.y"
+#line 455 "medlang.y"
     { (yyval.node) = make_binop(NEQ,      (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node), lineno); ;}
     break;
 
   case 95:
 
 /* Line 1455 of yacc.c  */
-#line 455 "medlang.y"
+#line 456 "medlang.y"
     { (yyval.node) = make_binop(GT,       (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node), lineno); ;}
     break;
 
   case 96:
 
 /* Line 1455 of yacc.c  */
-#line 456 "medlang.y"
+#line 457 "medlang.y"
     { (yyval.node) = make_binop(LT,       (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node), lineno); ;}
     break;
 
   case 97:
 
 /* Line 1455 of yacc.c  */
-#line 457 "medlang.y"
+#line 458 "medlang.y"
     { (yyval.node) = make_binop(GEQ,      (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node), lineno); ;}
     break;
 
   case 98:
 
 /* Line 1455 of yacc.c  */
-#line 458 "medlang.y"
+#line 459 "medlang.y"
     { (yyval.node) = make_binop(LEQ,      (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node), lineno); ;}
     break;
 
   case 99:
 
 /* Line 1455 of yacc.c  */
-#line 459 "medlang.y"
+#line 460 "medlang.y"
     { (yyval.node) = make_binop(AND,      (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node), lineno); ;}
     break;
 
   case 100:
 
 /* Line 1455 of yacc.c  */
-#line 460 "medlang.y"
+#line 461 "medlang.y"
     { (yyval.node) = make_binop(OR,       (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node), lineno); ;}
     break;
 
   case 101:
 
 /* Line 1455 of yacc.c  */
-#line 461 "medlang.y"
+#line 462 "medlang.y"
     { (yyval.node) = make_unop(NOT,   (yyvsp[(2) - (2)].node), lineno); ;}
     break;
 
   case 102:
 
 /* Line 1455 of yacc.c  */
-#line 463 "medlang.y"
+#line 464 "medlang.y"
     { (yyval.node) = make_unop(MINUS, (yyvsp[(2) - (2)].node), lineno); ;}
     break;
 
   case 103:
 
 /* Line 1455 of yacc.c  */
-#line 464 "medlang.y"
+#line 465 "medlang.y"
     { (yyval.node) = (yyvsp[(2) - (3)].node); ;}
     break;
 
   case 104:
 
 /* Line 1455 of yacc.c  */
-#line 465 "medlang.y"
+#line 466 "medlang.y"
     { (yyval.node) = make_int_lit((yyvsp[(1) - (1)].ival), lineno); ;}
     break;
 
   case 105:
 
 /* Line 1455 of yacc.c  */
-#line 466 "medlang.y"
+#line 467 "medlang.y"
     { (yyval.node) = make_float_lit((yyvsp[(1) - (1)].fval), lineno); ;}
     break;
 
   case 106:
 
 /* Line 1455 of yacc.c  */
-#line 467 "medlang.y"
+#line 468 "medlang.y"
     { (yyval.node) = make_string_lit((yyvsp[(1) - (1)].sval), lineno); ;}
     break;
 
   case 107:
 
 /* Line 1455 of yacc.c  */
-#line 468 "medlang.y"
+#line 469 "medlang.y"
     { (yyval.node) = make_ident((yyvsp[(1) - (1)].sval), lineno); ;}
     break;
 
   case 108:
 
 /* Line 1455 of yacc.c  */
-#line 469 "medlang.y"
+#line 470 "medlang.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 109:
 
 /* Line 1455 of yacc.c  */
-#line 470 "medlang.y"
+#line 471 "medlang.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 110:
 
 /* Line 1455 of yacc.c  */
-#line 471 "medlang.y"
+#line 472 "medlang.y"
     { (yyval.node) = make_int_lit(0, lineno); ;}
     break;
 
   case 111:
 
 /* Line 1455 of yacc.c  */
-#line 479 "medlang.y"
+#line 480 "medlang.y"
     { (yyval.node) = make_func_call("Power",     (yyvsp[(3) - (4)].arg), lineno); ;}
     break;
 
   case 112:
 
 /* Line 1455 of yacc.c  */
-#line 480 "medlang.y"
+#line 481 "medlang.y"
     { (yyval.node) = make_func_call("RootCause", (yyvsp[(3) - (4)].arg), lineno); ;}
     break;
 
   case 113:
 
 /* Line 1455 of yacc.c  */
-#line 481 "medlang.y"
+#line 482 "medlang.y"
     { (yyval.node) = make_func_call("AbsDose",   (yyvsp[(3) - (4)].arg), lineno); ;}
     break;
 
   case 114:
 
 /* Line 1455 of yacc.c  */
-#line 482 "medlang.y"
+#line 483 "medlang.y"
     { (yyval.node) = make_func_call("RoundDown", (yyvsp[(3) - (4)].arg), lineno); ;}
     break;
 
   case 115:
 
 /* Line 1455 of yacc.c  */
-#line 483 "medlang.y"
+#line 484 "medlang.y"
     { (yyval.node) = make_func_call("RoundUp",   (yyvsp[(3) - (4)].arg), lineno); ;}
     break;
 
   case 116:
 
 /* Line 1455 of yacc.c  */
-#line 484 "medlang.y"
+#line 485 "medlang.y"
     { (yyval.node) = make_func_call("Sine",      (yyvsp[(3) - (4)].arg), lineno); ;}
     break;
 
   case 117:
 
 /* Line 1455 of yacc.c  */
-#line 485 "medlang.y"
+#line 486 "medlang.y"
     { (yyval.node) = make_func_call("Cosine",    (yyvsp[(3) - (4)].arg), lineno); ;}
     break;
 
   case 118:
 
 /* Line 1455 of yacc.c  */
-#line 486 "medlang.y"
+#line 487 "medlang.y"
     { (yyval.node) = make_func_call("Tangent",   (yyvsp[(3) - (4)].arg), lineno); ;}
     break;
 
   case 119:
 
 /* Line 1455 of yacc.c  */
-#line 487 "medlang.y"
+#line 488 "medlang.y"
     { (yyval.node) = make_func_call("IsCritical",(yyvsp[(3) - (4)].arg), lineno); ;}
     break;
 
   case 120:
 
 /* Line 1455 of yacc.c  */
-#line 496 "medlang.y"
+#line 497 "medlang.y"
     { (yyval.node) = make_func_call((yyvsp[(1) - (4)].sval), (yyvsp[(3) - (4)].arg), lineno); ;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 2692 "medlang.tab.c"
+#line 2693 "medlang.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2900,7 +2901,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 499 "medlang.y"
+#line 500 "medlang.y"
 
 
 /* ============================================================
@@ -2909,6 +2910,7 @@ yyreturn:
 void yyerror(const char *s) {
     fprintf(stderr, "[MedLang Error] Line %d: %s\n", lineno, s);
 }
+
 
 /* ============================================================
    main
@@ -2932,8 +2934,19 @@ int main(int argc, char **argv) {
     /* --- Phase 3: Semantic Analysis --- */
     if (ast_root) {
         int sem_result = analyze_program(ast_root);
-        if (sem_result != 0)
+        if (sem_result != 0) {
+            fprintf(stderr,
+                "[MedLang] Semantic errors found. TAC generation skipped.\n");
             return sem_result;
+        }
+    }
+
+    /* --- Phase 4: TAC Generation --- */
+    if (ast_root) {
+        printf("[MedLang] Starting TAC generation...\n");
+        tac_gen_program(ast_root);
+        tac_print_all();
+        tac_free_all();
     }
 
     return 0;

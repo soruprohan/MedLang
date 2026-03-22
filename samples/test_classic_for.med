@@ -1,0 +1,11 @@
+## test_classic_for.med — Classic 3-part Cycle (for loop)
+## Expected: PASS, TAC generated
+
+Organ sum <: Organ n :> [:
+    Organ total =: 0 |
+    Organ i =: 0 |
+    Cycle <: i =: 1 | i MinSafe n | i =: i DosePlus 1 :> [:
+        total =: total DosePlus i |
+    :]
+    Discharge total |
+:]

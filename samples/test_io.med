@@ -1,0 +1,13 @@
+## test_io.med — Observe (printf) and Record (scanf)
+## Expected: PASS, TAC generated
+
+Admission <: :> [:
+    Organ age |
+    Observe <: "Enter your age: " :> |
+    Record <: "%d", age :> |
+    Diagnose <: age AboveNormal 17 :> [:
+        Observe <: "Adult patient.\n" :> |
+    :] Alternate [:
+        Observe <: "Minor patient.\n" :> |
+    :]
+:]

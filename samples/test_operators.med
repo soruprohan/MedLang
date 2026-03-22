@@ -1,0 +1,24 @@
+## test_operators.med — All operators: arithmetic, relational, logical, unary
+## Expected: PASS, TAC generated
+
+Admission <: :> [:
+    Organ a =: 10 |
+    Organ b =: 3 |
+
+    Organ add     =: a DosePlus b |
+    Organ sub     =: a DoseMinus b |
+    Organ mul     =: a DoseMultiply b |
+    Organ div     =: a DoseDivide b |
+    Organ mod     =: a DoseMod b |
+
+    Organ gt      =: a AboveNormal b |
+    Organ lt      =: a BelowNormal b |
+    Organ gte     =: a MaxSafe b |
+    Organ lte     =: a MinSafe b |
+    Organ eq      =: a Match b |
+    Organ neq     =: a MisMatch b |
+
+    Organ andOp   =: gt Both lt |
+    Organ orOp    =: gt Either lt |
+    Organ notOp   =: Negate gt |
+:]
