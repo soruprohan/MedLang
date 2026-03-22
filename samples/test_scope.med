@@ -1,0 +1,7 @@
+Admission <: :> [:
+    Organ x =: 1 |
+    Diagnose <: x AboveNormal 0 :> [:
+        Organ inner =: 99 |
+    :]
+    Organ y =: inner |
+:]

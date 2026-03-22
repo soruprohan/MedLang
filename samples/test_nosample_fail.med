@@ -1,0 +1,4 @@
+Admission <: :> [:
+    NoSample Organ patient |
+    Organ dose =: patient |
+:]

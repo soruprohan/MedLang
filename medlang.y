@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "ast.h"
+#include "symtable.h"
+#include "semantic.h"
 
 void yyerror(const char *s);
 int  yylex(void);
@@ -466,6 +468,7 @@ expr
     | IDENTIFIER          { $$ = make_ident($1, lineno); }
     | builtin_call        { $$ = $1; }
     | user_call           { $$ = $1; }
+    | NOSAMPLE            { $$ = make_int_lit(0, lineno); }
     ;
 
 /* ============================================================
@@ -514,8 +517,19 @@ int main(int argc, char **argv) {
             return 1;
         }
     }
-    int result = yyparse();
-    if (result == 0)
-        printf("[MedLang] Parse completed successfully.\n");
-    return result;
+
+    int parse_result = yyparse();
+    if (parse_result != 0)
+        return parse_result;
+
+    printf("[MedLang] Parse completed successfully.\n");
+
+    /* --- Phase 3: Semantic Analysis --- */
+    if (ast_root) {
+        int sem_result = analyze_program(ast_root);
+        if (sem_result != 0)
+            return sem_result;
+    }
+
+    return 0;
 }

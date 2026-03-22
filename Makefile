@@ -1,5 +1,5 @@
 all:
 	bison -d medlang.y
 	flex medlang.l
-	gcc medlang.tab.c lex.yy.c ast.c -o medlang.exe
-	medlang.exe samples/test1.med
+	gcc medlang.tab.c lex.yy.c ast.c symtable.c semantic.c -o medlang.exe
+	medlang.exe samples/test_nosample_pass.med

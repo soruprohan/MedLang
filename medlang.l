@@ -13,6 +13,7 @@ int lineno = 1;
 void yyerror(const char *s);
 %}
 
+
 /* -- Named patterns ------------------------------------------------------------*/
 DIGIT       [0-9]
 LETTER      [a-zA-Z_]

@@ -1,0 +1,5 @@
+Admission <: :> [:
+    Cycle <: i in 10 .. 1 :> [:
+        Organ x =: i |
+    :]
+:]

@@ -1,0 +1,7 @@
+Organ calculate <: Organ x :> [:
+    Organ result =: x |
+:]
+
+Admission <: :> [:
+    Organ val =: 0 |
+:]

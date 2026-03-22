@@ -1,0 +1,6 @@
+Admission <: :> [:
+    NoSample Organ patient |
+    Diagnose <: patient MisMatch NoSample :> [:
+        Organ dose =: patient |
+    :]
+:]
