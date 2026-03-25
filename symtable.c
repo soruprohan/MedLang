@@ -74,8 +74,8 @@ int scope_add(Scope *s, const char *name, const char *type,
     sym->is_nosample = is_nosample;
     sym->initialized = 0;
     sym->lineno      = lineno;
-    sym->next        = s->symbols;
-    s->symbols       = sym;
+    sym->next        = s->symbols; //these two lines make sure that the new symbol is added to the front of the linked list of symbols in this scope
+    s->symbols       = sym;         //
     return 0;
 }
 

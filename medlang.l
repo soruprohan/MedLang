@@ -60,6 +60,7 @@ FLOAT_EXP   {FLOAT_LIT}{EXP}?
 "Diabetes"          { printf("[TYPE] Diabetes (double) at line %d\n", lineno);        return DIABETES; }
 "Cell"              { printf("[TYPE] Cell (char) at line %d\n", lineno);              return CELL; }
 "NullTissue"        { printf("[TYPE] NullTissue (void) at line %d\n", lineno);        return NULLTISSUE; }
+"Tissue"            { printf("[TYPE] Tissue (string) at line %d\n", lineno);          return TISSUE; }
 "MajorOrgan"        { printf("[TYPE] MajorOrgan (long) at line %d\n", lineno);        return MAJORORGAN; }
 "MinorOrgan"        { printf("[TYPE] MinorOrgan (short) at line %d\n", lineno);       return MINORORGAN; }
 "NonPathologic"     { printf("[TYPE] NonPathologic (unsigned) at line %d\n", lineno); return NONPATHOLOGIC; }

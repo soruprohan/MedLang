@@ -29,13 +29,12 @@ ASTNode *ast_root = NULL;
 }
 
 /* ============================================================
-   Token declarations (unchanged from Phase 1)
    ============================================================ */
 %token <ival> INT_LITERAL
 %token <fval> FLOAT_LITERAL
 %token <sval> STRING_LITERAL IDENTIFIER
 
-%token ORGAN FLOW DIABETES CELL NULLTISSUE MAJORORGAN MINORORGAN NONPATHOLOGIC
+%token ORGAN FLOW DIABETES CELL NULLTISSUE MAJORORGAN MINORORGAN NONPATHOLOGIC TISSUE
 %token SEALED NOSAMPLE PROTOCOL
 %token DIAGNOSE ALTERNATE SCREENING RESULT IDIOPATHICCASE
 %token TERMINATE FOLLOWUP DISCHARGE
@@ -139,6 +138,7 @@ type_spec
     | MAJORORGAN    { $$ = "MajorOrgan";     }
     | MINORORGAN    { $$ = "MinorOrgan";     }
     | NONPATHOLOGIC { $$ = "NonPathologic";  }
+    | TISSUE        { $$ = "Tissue";         }
     ;
 
 /* ============================================================
@@ -167,7 +167,7 @@ nosample_decl
     ;
 
 /* ============================================================
-   Admission() — program entry point
+   Admission() — program entry point... no return type for this, always void
    ============================================================ */
 
 admission_func
@@ -411,7 +411,7 @@ arg
     ;
 
 named_arg
-    /* named:     patient: expr  */
+    /* named:     patient=: expr  */
     : IDENTIFIER ASSIGN expr
         { $$ = make_arg($1, $3, NULL); }
     /* positional */
@@ -521,6 +521,7 @@ int main(int argc, char **argv) {
         }
     }
 
+    /* --- Phase 2: Syntax Analysis --- */
     int parse_result = yyparse();
     if (parse_result != 0)
         return parse_result;

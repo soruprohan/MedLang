@@ -1,0 +1,53 @@
+## test_tissue.med
+## Tests for native Tissue (string) type
+
+## --- Test 1: string passed to a function ---
+NullTissue greet <: Tissue name :> [: 
+    Observe <: "Hello, %s!\n", name :> |
+:]
+
+## --- Test 2: function takes two strings ---
+NullTissue diagnosePatient <: Tissue patient, Tissue condition :> [:
+    Observe <: "Patient : %s\n", patient :> |
+    Observe <: "Condition: %s\n", condition :> |
+:]
+
+## --- Test 3: function returns a Tissue (string) ---
+Tissue getStatus <: Organ code :> [:
+    Diagnose <: code Match 1 :> [:
+        Discharge "Critical" |
+    :]
+    Diagnose <: code Match 2 :> [:
+        Discharge "Stable" |
+    :]
+    Discharge "Unknown" |
+:]
+
+Admission <: :> [:
+
+    ## Test 1: assign string to Tissue variable and print it
+    Tissue msg =: "String variables work!" |
+    Observe <: "%s\n", msg :> |
+
+    ## Test 2: pass Tissue variable to a function
+    Tissue pname =: "Alice" |
+    greet <: pname :> |
+
+    ## Test 3: pass string literal directly to a function
+    greet <: "Bob" :> |
+
+    ## Test 4: pass two string variables to a function
+    Tissue patient =: "John Doe" |
+    Tissue condition =: "Hypertension" |
+    diagnosePatient <: patient, condition :> |
+
+    ## Test 5: function returns a string into a Tissue variable
+    Organ code =: 1 |
+    Tissue status =: getStatus <: code :> |
+    Observe <: "Status: %s\n", status :> |
+
+    Organ code2 =: 2 |
+    Tissue status2 =: getStatus <: code2 :> |
+    Observe <: "Status: %s\n", status2 :> |
+
+:]

@@ -56,7 +56,7 @@ typedef struct ArgNode {
    The AST node itself
    ============================================================ */
 typedef struct ASTNode {
-    NodeType type;
+    NodeType type;      /*NodeType is the enum defined above*/
     int      lineno;   /* source line — useful for error msgs */
 
     union {

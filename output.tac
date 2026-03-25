@@ -1,58 +1,55 @@
 ; MedLang Three-Address Code
-begin_func Admission
-    param "=== Trigonometry Table ===\n"
-    t0 = call Observe, 1
-    param "Angle(deg) | sin       | cos       | tan\n"
-    t1 = call Observe, 1
-    param "-----------|-----------|-----------|----------\n"
-    t2 = call Observe, 1
-    PI = 3.14159
-    deg = 0
+begin_func greet
+    param "Hello, %s!\n"
+    param name
+    t0 = call Observe, 2
+end_func
+begin_func diagnosePatient
+    param "Patient : %s\n"
+    param patient
+    t1 = call Observe, 2
+    param "Condition: %s\n"
+    param condition
+    t2 = call Observe, 2
+end_func
+begin_func getStatus
+    t3 = code == 1
+    ifnot t3 goto L0
+    return "Critical"
 L0:
-    t3 = deg <= 6
-    ifnot t3 goto L1
-    t4 = deg * 30
-    angle_deg = t4
-    t5 = angle_deg * PI
-    t6 = t5 / 180
-    angle_rad = t6
-    param angle_rad
-    t7 = call Sine, 1
-    s = t7
-    param angle_rad
-    t8 = call Cosine, 1
-    c = t8
-    param angle_rad
-    t9 = call Tangent, 1
-    t = t9
-    param "%d          | %f  | %f  | %f\n"
-    param angle_deg
-    param s
-    param c
-    param t
-    t10 = call Observe, 5
-    t11 = deg + 1
-    deg = t11
-    goto L0
-L1:
-    param "\n=== Blood Pressure Critical Check ===\n"
-    t12 = call Observe, 1
-    systolic = 155
-    diastolic = 95
-    param systolic
-    param diastolic
-    t13 = call IsCritical, 2
-    critical = t13
-    param "Systolic: %d, Diastolic: %d\n"
-    param systolic
-    param diastolic
-    t14 = call Observe, 3
-    ifnot critical goto L2
-    param "Status: CRITICAL - immediate attention required\n"
-    t15 = call Observe, 1
-    goto L3
+    t4 = code == 2
+    ifnot t4 goto L2
+    return "Stable"
 L2:
-    param "Status: Normal\n"
-    t16 = call Observe, 1
-L3:
+    return "Unknown"
+end_func
+begin_func Admission
+    msg = "String variables work!"
+    param "%s\n"
+    param msg
+    t5 = call Observe, 2
+    pname = "Alice"
+    param pname
+    t6 = call greet, 1
+    param "Bob"
+    t7 = call greet, 1
+    patient = "John Doe"
+    condition = "Hypertension"
+    param patient
+    param condition
+    t8 = call diagnosePatient, 2
+    code = 1
+    param code
+    t9 = call getStatus, 1
+    status = t9
+    param "Status: %s\n"
+    param status
+    t10 = call Observe, 2
+    code2 = 2
+    param code2
+    t11 = call getStatus, 1
+    status2 = t11
+    param "Status: %s\n"
+    param status2
+    t12 = call Observe, 2
 end_func

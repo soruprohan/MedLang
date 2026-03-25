@@ -70,6 +70,9 @@ static int types_compatible(const char *lhs, const char *rhs) {
       if (strcmp(lhs, "Cell") == 0)
         return strcmp(rhs, "Organ") == 0;
 
+    if (strcmp(lhs, "Tissue") == 0)
+        return strcmp(rhs, "Tissue") == 0;
+
     if (strcmp(lhs, "MinorOrgan") == 0)
         return strcmp(rhs, "Organ") == 0;
 
@@ -89,7 +92,7 @@ static const char *infer_type(ASTNode *node, Scope *scope) {
 
     case NODE_INT_LIT:    return "Organ";
     case NODE_FLOAT_LIT:  return "Flow";
-    case NODE_STRING_LIT: return "Cell";
+    case NODE_STRING_LIT: return "Tissue";
 
     case NODE_IDENT: {
         Symbol *sym = scope_lookup(scope, node->sval);
