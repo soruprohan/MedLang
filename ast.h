@@ -192,7 +192,5 @@ ASTNode *make_stmt_list(ASTNode *head, ASTNode *tail);
 /* Program root */
 ASTNode *make_program(ASTNode *stmts);
 
-/* AST pretty-printer */
-void print_ast(ASTNode *n, int indent);
 
 #endif /* AST_H */

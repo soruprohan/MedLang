@@ -885,15 +885,12 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 #line 31 "medlang.l"
-{
-                        printf("[COMMENT] Single-line comment at line %d\n", lineno);
-                    }
+{ /* skip */ }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 35 "medlang.l"
+#line 33 "medlang.l"
 {
-                        printf("[COMMENT] Multi-line comment starts at line %d\n", lineno);
                         int c, prev = 0;
                         while (1) {
                             c = input();
@@ -905,7 +902,6 @@ YY_RULE_SETUP
                             }
                             if (c == '\n') lineno++;
                             if (prev == '+' && c == '#') {
-                                printf("[COMMENT] Multi-line comment ends at line %d\n", lineno);
                                 break;
                             }
                             prev = c;
@@ -914,385 +910,382 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 55 "medlang.l"
-{ printf("[PREPROC] #Prescribe (include) at line %d\n", lineno);  return PRESCRIBE; }
+#line 51 "medlang.l"
+{ return PRESCRIBE; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 56 "medlang.l"
-{ printf("[PREPROC] #Protocol (define) at line %d\n", lineno);    return DEFINE; }
+#line 52 "medlang.l"
+{ return DEFINE; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 58 "medlang.l"
-{ printf("[TYPE] Organ (int) at line %d\n", lineno);              return ORGAN; }
+#line 54 "medlang.l"
+{ return ORGAN; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 59 "medlang.l"
-{ printf("[TYPE] Flow (float) at line %d\n", lineno);             return FLOW; }
+#line 55 "medlang.l"
+{ return FLOW; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 60 "medlang.l"
-{ printf("[TYPE] Diabetes (double) at line %d\n", lineno);        return DIABETES; }
+#line 56 "medlang.l"
+{ return DIABETES; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 61 "medlang.l"
-{ printf("[TYPE] Cell (char) at line %d\n", lineno);              return CELL; }
+#line 57 "medlang.l"
+{ return CELL; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 62 "medlang.l"
-{ printf("[TYPE] NullTissue (void) at line %d\n", lineno);        return NULLTISSUE; }
+#line 58 "medlang.l"
+{ return NULLTISSUE; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 63 "medlang.l"
-{ printf("[TYPE] Tissue (string) at line %d\n", lineno);          return TISSUE; }
+#line 59 "medlang.l"
+{ return TISSUE; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 64 "medlang.l"
-{ printf("[TYPE] MajorOrgan (long) at line %d\n", lineno);        return MAJORORGAN; }
+#line 60 "medlang.l"
+{ return MAJORORGAN; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 65 "medlang.l"
-{ printf("[TYPE] MinorOrgan (short) at line %d\n", lineno);       return MINORORGAN; }
+#line 61 "medlang.l"
+{ return MINORORGAN; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 66 "medlang.l"
-{ printf("[TYPE] NonPathologic (unsigned) at line %d\n", lineno); return NONPATHOLOGIC; }
+#line 62 "medlang.l"
+{ return NONPATHOLOGIC; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 68 "medlang.l"
-{ printf("[UNIQUE] Sealed (immutable) at line %d\n", lineno);     return SEALED; }
+#line 64 "medlang.l"
+{ return SEALED; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 69 "medlang.l"
-{ printf("[UNIQUE] NoSample (nullable) at line %d\n", lineno);    return NOSAMPLE; }
+#line 65 "medlang.l"
+{ return NOSAMPLE; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 70 "medlang.l"
-{ printf("[UNIQUE] Protocol (interface) at line %d\n", lineno);   return PROTOCOL; }
+#line 66 "medlang.l"
+{ return PROTOCOL; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 72 "medlang.l"
-{ printf("[CTRL] Diagnose (if) at line %d\n", lineno);            return DIAGNOSE; }
+#line 68 "medlang.l"
+{ return DIAGNOSE; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 73 "medlang.l"
-{ printf("[CTRL] Alternate (else) at line %d\n", lineno);         return ALTERNATE; }
+#line 69 "medlang.l"
+{ return ALTERNATE; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 74 "medlang.l"
-{ printf("[CTRL] Screening (switch) at line %d\n", lineno);       return SCREENING; }
+#line 70 "medlang.l"
+{ return SCREENING; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 75 "medlang.l"
-{ printf("[CTRL] Result (case) at line %d\n", lineno);            return RESULT; }
+#line 71 "medlang.l"
+{ return RESULT; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 76 "medlang.l"
-{ printf("[CTRL] IdiopathicCase (default) at line %d\n", lineno); return IDIOPATHICCASE; }
+#line 72 "medlang.l"
+{ return IDIOPATHICCASE; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 77 "medlang.l"
-{ printf("[CTRL] Terminate (break) at line %d\n", lineno);        return TERMINATE; }
+#line 73 "medlang.l"
+{ return TERMINATE; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 78 "medlang.l"
-{ printf("[CTRL] FollowUp (continue) at line %d\n", lineno);      return FOLLOWUP; }
+#line 74 "medlang.l"
+{ return FOLLOWUP; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 79 "medlang.l"
-{ printf("[CTRL] Discharge (return) at line %d\n", lineno);       return DISCHARGE; }
+#line 75 "medlang.l"
+{ return DISCHARGE; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 81 "medlang.l"
-{ printf("[LOOP] Cycle (for) at line %d\n", lineno);              return CYCLE; }
+#line 77 "medlang.l"
+{ return CYCLE; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 82 "medlang.l"
-{ printf("[LOOP] Continuous (while) at line %d\n", lineno);       return CONTINUOUS; }
+#line 78 "medlang.l"
+{ return CONTINUOUS; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 83 "medlang.l"
-{ printf("[LOOP] LoadingDose (do) at line %d\n", lineno);         return LOADINGDOSE; }
+#line 79 "medlang.l"
+{ return LOADINGDOSE; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 84 "medlang.l"
-{ printf("[KW] in at line %d\n", lineno);                         return IN_KW; }
+#line 80 "medlang.l"
+{ return IN_KW; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 86 "medlang.l"
-{ printf("[ENTRY] Admission (main) at line %d\n", lineno);        return ADMISSION; }
+#line 82 "medlang.l"
+{ return ADMISSION; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 88 "medlang.l"
-{ printf("[IO] Record (scanf) at line %d\n", lineno);             return RECORD_KW; }
+#line 84 "medlang.l"
+{ return RECORD_KW; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 89 "medlang.l"
-{ printf("[IO] Observe (printf) at line %d\n", lineno);           return OBSERVE_KW; }
+#line 85 "medlang.l"
+{ return OBSERVE_KW; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 90 "medlang.l"
-{ printf("[IO] exit at line %d\n", lineno);                       return EXIT_KW; }
+#line 86 "medlang.l"
+{ return EXIT_KW; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 92 "medlang.l"
-{ printf("[MATH] Power (pow) at line %d\n", lineno);              return POWER_FN; }
+#line 88 "medlang.l"
+{ return POWER_FN; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 93 "medlang.l"
-{ printf("[MATH] RootCause (sqrt) at line %d\n", lineno);         return ROOTCAUSE; }
+#line 89 "medlang.l"
+{ return ROOTCAUSE; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 94 "medlang.l"
-{ printf("[MATH] AbsDose (abs) at line %d\n", lineno);            return ABSDOSE; }
+#line 90 "medlang.l"
+{ return ABSDOSE; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 95 "medlang.l"
-{ printf("[MATH] RoundDown (floor) at line %d\n", lineno);        return ROUNDDOWN; }
+#line 91 "medlang.l"
+{ return ROUNDDOWN; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 96 "medlang.l"
-{ printf("[MATH] RoundUp (ceil) at line %d\n", lineno);           return ROUNDUP; }
+#line 92 "medlang.l"
+{ return ROUNDUP; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 97 "medlang.l"
-{ printf("[MATH] Sine (sin) at line %d\n", lineno);               return SINE; }
+#line 93 "medlang.l"
+{ return SINE; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 98 "medlang.l"
-{ printf("[MATH] Cosine (cos) at line %d\n", lineno);             return COSINE; }
+#line 94 "medlang.l"
+{ return COSINE; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 99 "medlang.l"
-{ printf("[MATH] Tangent (tan) at line %d\n", lineno);            return TANGENT; }
+#line 95 "medlang.l"
+{ return TANGENT; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 100 "medlang.l"
-{ printf("[MATH] IsCritical (custom bool fn) at line %d\n", lineno); return ISCRITICAL; }
+#line 96 "medlang.l"
+{ return ISCRITICAL; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 102 "medlang.l"
-{ printf("[DS] Specimen (struct) at line %d\n", lineno);          return RECORD_STRUCT; }
+#line 98 "medlang.l"
+{ return RECORD_STRUCT; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 103 "medlang.l"
-{ printf("[DS] Instrument (union) at line %d\n", lineno);         return INSTRUMENT; }
+#line 99 "medlang.l"
+{ return INSTRUMENT; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 104 "medlang.l"
-{ printf("[DS] TypeAlias (typedef) at line %d\n", lineno);        return TYPEALIAS; }
+#line 100 "medlang.l"
+{ return TYPEALIAS; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 105 "medlang.l"
-{ printf("[DS] DiagnosisList (enum) at line %d\n", lineno);       return DIAGNOSISLIST; }
+#line 101 "medlang.l"
+{ return DIAGNOSISLIST; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 107 "medlang.l"
-{ printf("[MEM] Synapse (pointer *) at line %d\n", lineno);       return SYNAPSE; }
+#line 103 "medlang.l"
+{ return SYNAPSE; }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 108 "medlang.l"
-{ printf("[MEM] Biopsy (address &) at line %d\n", lineno);        return BIOPSY; }
+#line 104 "medlang.l"
+{ return BIOPSY; }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 109 "medlang.l"
-{ printf("[MEM] WardAlloc (malloc) at line %d\n", lineno);        return WARDALLOC; }
+#line 105 "medlang.l"
+{ return WARDALLOC; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 110 "medlang.l"
-{ printf("[MEM] FreeWard (free) at line %d\n", lineno);           return FREEWARD; }
+#line 106 "medlang.l"
+{ return FREEWARD; }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 111 "medlang.l"
-{ printf("[MEM] SizeScan (sizeof) at line %d\n", lineno);         return SIZESCAN; }
+#line 107 "medlang.l"
+{ return SIZESCAN; }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 113 "medlang.l"
-{ printf("[OP] ASSIGN at line %d\n", lineno);                     return ASSIGN; }
+#line 109 "medlang.l"
+{ return ASSIGN; }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 114 "medlang.l"
-{ printf("[OP] Match (==) at line %d\n", lineno);                 return EQ; }
+#line 110 "medlang.l"
+{ return EQ; }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 115 "medlang.l"
-{ printf("[OP] MisMatch (!=) at line %d\n", lineno);              return NEQ; }
+#line 111 "medlang.l"
+{ return NEQ; }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 116 "medlang.l"
-{ printf("[OP] AboveNormal (>) at line %d\n", lineno);            return GT; }
+#line 112 "medlang.l"
+{ return GT; }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 117 "medlang.l"
-{ printf("[OP] BelowNormal (<) at line %d\n", lineno);            return LT; }
+#line 113 "medlang.l"
+{ return LT; }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 118 "medlang.l"
-{ printf("[OP] MaxSafe (>=) at line %d\n", lineno);               return GEQ; }
+#line 114 "medlang.l"
+{ return GEQ; }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 119 "medlang.l"
-{ printf("[OP] MinSafe (<=) at line %d\n", lineno);               return LEQ; }
+#line 115 "medlang.l"
+{ return LEQ; }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 120 "medlang.l"
-{ printf("[OP] Both (&&) at line %d\n", lineno);                  return AND; }
+#line 116 "medlang.l"
+{ return AND; }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 121 "medlang.l"
-{ printf("[OP] Either (||) at line %d\n", lineno);                return OR; }
+#line 117 "medlang.l"
+{ return OR; }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 122 "medlang.l"
-{ printf("[OP] Negate (!) at line %d\n", lineno);                 return NOT; }
+#line 118 "medlang.l"
+{ return NOT; }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 123 "medlang.l"
-{ printf("[OP] DosePlus (+) at line %d\n", lineno);               return PLUS; }
+#line 119 "medlang.l"
+{ return PLUS; }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 124 "medlang.l"
-{ printf("[OP] DoseMinus (-) at line %d\n", lineno);              return MINUS; }
+#line 120 "medlang.l"
+{ return MINUS; }
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 125 "medlang.l"
-{ printf("[OP] DoseMultiply (*) at line %d\n", lineno);           return MULTIPLY; }
+#line 121 "medlang.l"
+{ return MULTIPLY; }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 126 "medlang.l"
-{ printf("[OP] DoseDivide (/) at line %d\n", lineno);             return DIVIDE; }
+#line 122 "medlang.l"
+{ return DIVIDE; }
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 127 "medlang.l"
-{ printf("[OP] DoseMod (%%) at line %d\n", lineno);               return MOD; }
+#line 123 "medlang.l"
+{ return MOD; }
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 129 "medlang.l"
-{ printf("[DELIM] SEMICOLON at line %d\n", lineno);               return SEMICOLON; }
+#line 125 "medlang.l"
+{ return SEMICOLON; }
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 130 "medlang.l"
-{ printf("[DELIM] LPAREN at line %d\n", lineno);                  return LPAREN; }
+#line 126 "medlang.l"
+{ return LPAREN; }
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 131 "medlang.l"
-{ printf("[DELIM] RPAREN at line %d\n", lineno);                  return RPAREN; }
+#line 127 "medlang.l"
+{ return RPAREN; }
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 132 "medlang.l"
-{ printf("[DELIM] LBRACE at line %d\n", lineno);                  return LBRACE; }
+#line 128 "medlang.l"
+{ return LBRACE; }
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 133 "medlang.l"
-{ printf("[DELIM] RBRACE at line %d\n", lineno);                  return RBRACE; }
+#line 129 "medlang.l"
+{ return RBRACE; }
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 134 "medlang.l"
-{ printf("[DELIM] RANGE_OP at line %d\n", lineno);                return RANGE_OP; }
+#line 130 "medlang.l"
+{ return RANGE_OP; }
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 135 "medlang.l"
-{ printf("[DELIM] COMMA at line %d\n", lineno);                   return COMMA; }
+#line 131 "medlang.l"
+{ return COMMA; }
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 137 "medlang.l"
+#line 133 "medlang.l"
 {
                         yylval.fval = atof(yytext);
-                        printf("[LIT] Float literal: %s at line %d\n", yytext, lineno);
                         return FLOAT_LITERAL;
                     }
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 143 "medlang.l"
+#line 138 "medlang.l"
 {
                         yylval.ival = atoi(yytext);
-                        printf("[LIT] Int literal: %s at line %d\n", yytext, lineno);
                         return INT_LITERAL;
                     }
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 149 "medlang.l"
+#line 143 "medlang.l"
 {
                         yylval.sval = strdup(yytext + 1);
                         yylval.sval[yyleng - 2] = '\0';
-                        printf("[LIT] String literal: %s at line %d\n", yylval.sval, lineno);
                         return STRING_LITERAL;
                     }
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 156 "medlang.l"
+#line 149 "medlang.l"
 {
                         fprintf(stderr,
                             "[MedLang Error] Line %d: unterminated string literal\n", lineno);
@@ -1301,35 +1294,33 @@ YY_RULE_SETUP
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 162 "medlang.l"
+#line 155 "medlang.l"
 {
                         yylval.ival = yytext[1];
-                        printf("[LIT] Char literal: %c at line %d\n", yytext[1], lineno);
                         return INT_LITERAL;
                     }
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 168 "medlang.l"
+#line 160 "medlang.l"
 {
                         yylval.sval = strdup(yytext);
-                        printf("[IDENT] Identifier: %s at line %d\n", yytext, lineno);
                         return IDENTIFIER;
                     }
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 174 "medlang.l"
+#line 165 "medlang.l"
 { lineno++; }
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 175 "medlang.l"
+#line 166 "medlang.l"
 { /* skip spaces and tabs */ }
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 177 "medlang.l"
+#line 168 "medlang.l"
 {
                         fprintf(stderr,
                             "[MedLang Error] Line %d: unknown character '%s'\n",
@@ -1338,10 +1329,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 183 "medlang.l"
+#line 174 "medlang.l"
 ECHO;
 	YY_BREAK
-#line 1345 "lex.yy.c"
+#line 1336 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2227,4 +2218,4 @@ int main()
 	return 0;
 	}
 #endif
-#line 183 "medlang.l"
+#line 174 "medlang.l"

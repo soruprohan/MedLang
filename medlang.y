@@ -5,7 +5,6 @@
 #include "ast.h"
 #include "symtable.h"
 #include "semantic.h"
-#include "tac.h"
 #include "interp.h"
 
 void yyerror(const char *s);
@@ -100,7 +99,6 @@ program
             $$ = make_program($1);
             ast_root = $$;
             printf("[PARSE] Program parsed successfully.\n");
-            print_ast(ast_root, 0);
         }
     | /* empty */
         {
@@ -533,20 +531,12 @@ int main(int argc, char **argv) {
         int sem_result = analyze_program(ast_root);
         if (sem_result != 0) {
             fprintf(stderr,
-                "[MedLang] Semantic errors found. TAC generation skipped.\n");
+                "[MedLang] Semantic errors found.\n");
             return sem_result;
         }
     }
 
-    /* --- Phase 4: TAC Generation --- */
-    if (ast_root) {
-        printf("[MedLang] Starting TAC generation...\n");
-        tac_gen_program(ast_root);
-        tac_print_all();
-        tac_free_all();
-    }
-    
-    /* --- Phase 5: AST Interpreter --- */  
+    /* --- Phase 4: AST Interpreter --- */  
     if (ast_root) {
         printf("[MedLang] Starting interpreter...\n");
         interp_run(ast_root);

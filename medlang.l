@@ -28,12 +28,9 @@ FLOAT_EXP   {FLOAT_LIT}{EXP}?
 
 %%
 
-"##".*              {
-                        printf("[COMMENT] Single-line comment at line %d\n", lineno);
-                    }
+"##".*              { /* skip */ }
 
 "#+"                {
-                        printf("[COMMENT] Multi-line comment starts at line %d\n", lineno);
                         int c, prev = 0;
                         while (1) {
                             c = input();
@@ -45,111 +42,107 @@ FLOAT_EXP   {FLOAT_LIT}{EXP}?
                             }
                             if (c == '\n') lineno++;
                             if (prev == '+' && c == '#') {
-                                printf("[COMMENT] Multi-line comment ends at line %d\n", lineno);
                                 break;
                             }
                             prev = c;
                         }
                     }
 
-"#Prescribe"        { printf("[PREPROC] #Prescribe (include) at line %d\n", lineno);  return PRESCRIBE; }
-"#Protocol"         { printf("[PREPROC] #Protocol (define) at line %d\n", lineno);    return DEFINE; }
+"#Prescribe"        { return PRESCRIBE; }
+"#Protocol"         { return DEFINE; }
 
-"Organ"             { printf("[TYPE] Organ (int) at line %d\n", lineno);              return ORGAN; }
-"Flow"              { printf("[TYPE] Flow (float) at line %d\n", lineno);             return FLOW; }
-"Diabetes"          { printf("[TYPE] Diabetes (double) at line %d\n", lineno);        return DIABETES; }
-"Cell"              { printf("[TYPE] Cell (char) at line %d\n", lineno);              return CELL; }
-"NullTissue"        { printf("[TYPE] NullTissue (void) at line %d\n", lineno);        return NULLTISSUE; }
-"Tissue"            { printf("[TYPE] Tissue (string) at line %d\n", lineno);          return TISSUE; }
-"MajorOrgan"        { printf("[TYPE] MajorOrgan (long) at line %d\n", lineno);        return MAJORORGAN; }
-"MinorOrgan"        { printf("[TYPE] MinorOrgan (short) at line %d\n", lineno);       return MINORORGAN; }
-"NonPathologic"     { printf("[TYPE] NonPathologic (unsigned) at line %d\n", lineno); return NONPATHOLOGIC; }
+"Organ"             { return ORGAN; }
+"Flow"              { return FLOW; }
+"Diabetes"          { return DIABETES; }
+"Cell"              { return CELL; }
+"NullTissue"        { return NULLTISSUE; }
+"Tissue"            { return TISSUE; }
+"MajorOrgan"        { return MAJORORGAN; }
+"MinorOrgan"        { return MINORORGAN; }
+"NonPathologic"     { return NONPATHOLOGIC; }
 
-"Sealed"            { printf("[UNIQUE] Sealed (immutable) at line %d\n", lineno);     return SEALED; }
-"NoSample"          { printf("[UNIQUE] NoSample (nullable) at line %d\n", lineno);    return NOSAMPLE; }
-"Protocol"          { printf("[UNIQUE] Protocol (interface) at line %d\n", lineno);   return PROTOCOL; }
+"Sealed"            { return SEALED; }
+"NoSample"          { return NOSAMPLE; }
+"Protocol"          { return PROTOCOL; }
 
-"Diagnose"          { printf("[CTRL] Diagnose (if) at line %d\n", lineno);            return DIAGNOSE; }
-"Alternate"         { printf("[CTRL] Alternate (else) at line %d\n", lineno);         return ALTERNATE; }
-"Screening"         { printf("[CTRL] Screening (switch) at line %d\n", lineno);       return SCREENING; }
-"Result"            { printf("[CTRL] Result (case) at line %d\n", lineno);            return RESULT; }
-"IdiopathicCase"    { printf("[CTRL] IdiopathicCase (default) at line %d\n", lineno); return IDIOPATHICCASE; }
-"Terminate"         { printf("[CTRL] Terminate (break) at line %d\n", lineno);        return TERMINATE; }
-"FollowUp"          { printf("[CTRL] FollowUp (continue) at line %d\n", lineno);      return FOLLOWUP; }
-"Discharge"         { printf("[CTRL] Discharge (return) at line %d\n", lineno);       return DISCHARGE; }
+"Diagnose"          { return DIAGNOSE; }
+"Alternate"         { return ALTERNATE; }
+"Screening"         { return SCREENING; }
+"Result"            { return RESULT; }
+"IdiopathicCase"    { return IDIOPATHICCASE; }
+"Terminate"         { return TERMINATE; }
+"FollowUp"          { return FOLLOWUP; }
+"Discharge"         { return DISCHARGE; }
 
-"Cycle"             { printf("[LOOP] Cycle (for) at line %d\n", lineno);              return CYCLE; }
-"Continuous"        { printf("[LOOP] Continuous (while) at line %d\n", lineno);       return CONTINUOUS; }
-"LoadingDose"       { printf("[LOOP] LoadingDose (do) at line %d\n", lineno);         return LOADINGDOSE; }
-"in"                { printf("[KW] in at line %d\n", lineno);                         return IN_KW; }
+"Cycle"             { return CYCLE; }
+"Continuous"        { return CONTINUOUS; }
+"LoadingDose"       { return LOADINGDOSE; }
+"in"                { return IN_KW; }
 
-"Admission"         { printf("[ENTRY] Admission (main) at line %d\n", lineno);        return ADMISSION; }
+"Admission"         { return ADMISSION; }
 
-"Record"            { printf("[IO] Record (scanf) at line %d\n", lineno);             return RECORD_KW; }
-"Observe"           { printf("[IO] Observe (printf) at line %d\n", lineno);           return OBSERVE_KW; }
-"exit"              { printf("[IO] exit at line %d\n", lineno);                       return EXIT_KW; }
+"Record"            { return RECORD_KW; }
+"Observe"           { return OBSERVE_KW; }
+"exit"              { return EXIT_KW; }
 
-"Power"             { printf("[MATH] Power (pow) at line %d\n", lineno);              return POWER_FN; }
-"RootCause"         { printf("[MATH] RootCause (sqrt) at line %d\n", lineno);         return ROOTCAUSE; }
-"AbsDose"           { printf("[MATH] AbsDose (abs) at line %d\n", lineno);            return ABSDOSE; }
-"RoundDown"         { printf("[MATH] RoundDown (floor) at line %d\n", lineno);        return ROUNDDOWN; }
-"RoundUp"           { printf("[MATH] RoundUp (ceil) at line %d\n", lineno);           return ROUNDUP; }
-"Sine"              { printf("[MATH] Sine (sin) at line %d\n", lineno);               return SINE; }
-"Cosine"            { printf("[MATH] Cosine (cos) at line %d\n", lineno);             return COSINE; }
-"Tangent"           { printf("[MATH] Tangent (tan) at line %d\n", lineno);            return TANGENT; }
-"IsCritical"        { printf("[MATH] IsCritical (custom bool fn) at line %d\n", lineno); return ISCRITICAL; }
+"Power"             { return POWER_FN; }
+"RootCause"         { return ROOTCAUSE; }
+"AbsDose"           { return ABSDOSE; }
+"RoundDown"         { return ROUNDDOWN; }
+"RoundUp"           { return ROUNDUP; }
+"Sine"              { return SINE; }
+"Cosine"            { return COSINE; }
+"Tangent"           { return TANGENT; }
+"IsCritical"        { return ISCRITICAL; }
 
-"Specimen"          { printf("[DS] Specimen (struct) at line %d\n", lineno);          return RECORD_STRUCT; }
-"Instrument"        { printf("[DS] Instrument (union) at line %d\n", lineno);         return INSTRUMENT; }
-"TypeAlias"         { printf("[DS] TypeAlias (typedef) at line %d\n", lineno);        return TYPEALIAS; }
-"DiagnosisList"     { printf("[DS] DiagnosisList (enum) at line %d\n", lineno);       return DIAGNOSISLIST; }
+"Specimen"          { return RECORD_STRUCT; }
+"Instrument"        { return INSTRUMENT; }
+"TypeAlias"         { return TYPEALIAS; }
+"DiagnosisList"     { return DIAGNOSISLIST; }
 
-"Synapse"           { printf("[MEM] Synapse (pointer *) at line %d\n", lineno);       return SYNAPSE; }
-"Biopsy"            { printf("[MEM] Biopsy (address &) at line %d\n", lineno);        return BIOPSY; }
-"WardAlloc"         { printf("[MEM] WardAlloc (malloc) at line %d\n", lineno);        return WARDALLOC; }
-"FreeWard"          { printf("[MEM] FreeWard (free) at line %d\n", lineno);           return FREEWARD; }
-"SizeScan"          { printf("[MEM] SizeScan (sizeof) at line %d\n", lineno);         return SIZESCAN; }
+"Synapse"           { return SYNAPSE; }
+"Biopsy"            { return BIOPSY; }
+"WardAlloc"         { return WARDALLOC; }
+"FreeWard"          { return FREEWARD; }
+"SizeScan"          { return SIZESCAN; }
 
-"=:"                { printf("[OP] ASSIGN at line %d\n", lineno);                     return ASSIGN; }
-"Match"             { printf("[OP] Match (==) at line %d\n", lineno);                 return EQ; }
-"MisMatch"          { printf("[OP] MisMatch (!=) at line %d\n", lineno);              return NEQ; }
-"AboveNormal"       { printf("[OP] AboveNormal (>) at line %d\n", lineno);            return GT; }
-"BelowNormal"       { printf("[OP] BelowNormal (<) at line %d\n", lineno);            return LT; }
-"MaxSafe"           { printf("[OP] MaxSafe (>=) at line %d\n", lineno);               return GEQ; }
-"MinSafe"           { printf("[OP] MinSafe (<=) at line %d\n", lineno);               return LEQ; }
-"Both"              { printf("[OP] Both (&&) at line %d\n", lineno);                  return AND; }
-"Either"            { printf("[OP] Either (||) at line %d\n", lineno);                return OR; }
-"Negate"            { printf("[OP] Negate (!) at line %d\n", lineno);                 return NOT; }
-"DosePlus"          { printf("[OP] DosePlus (+) at line %d\n", lineno);               return PLUS; }
-"DoseMinus"         { printf("[OP] DoseMinus (-) at line %d\n", lineno);              return MINUS; }
-"DoseMultiply"      { printf("[OP] DoseMultiply (*) at line %d\n", lineno);           return MULTIPLY; }
-"DoseDivide"        { printf("[OP] DoseDivide (/) at line %d\n", lineno);             return DIVIDE; }
-"DoseMod"           { printf("[OP] DoseMod (%%) at line %d\n", lineno);               return MOD; }
+"=:"                { return ASSIGN; }
+"Match"             { return EQ; }
+"MisMatch"          { return NEQ; }
+"AboveNormal"       { return GT; }
+"BelowNormal"       { return LT; }
+"MaxSafe"           { return GEQ; }
+"MinSafe"           { return LEQ; }
+"Both"              { return AND; }
+"Either"            { return OR; }
+"Negate"            { return NOT; }
+"DosePlus"          { return PLUS; }
+"DoseMinus"         { return MINUS; }
+"DoseMultiply"      { return MULTIPLY; }
+"DoseDivide"        { return DIVIDE; }
+"DoseMod"           { return MOD; }
 
-"|"                 { printf("[DELIM] SEMICOLON at line %d\n", lineno);               return SEMICOLON; }
-"<:"                { printf("[DELIM] LPAREN at line %d\n", lineno);                  return LPAREN; }
-":>"                { printf("[DELIM] RPAREN at line %d\n", lineno);                  return RPAREN; }
-"[:"                { printf("[DELIM] LBRACE at line %d\n", lineno);                  return LBRACE; }
-":]"                { printf("[DELIM] RBRACE at line %d\n", lineno);                  return RBRACE; }
-".."                { printf("[DELIM] RANGE_OP at line %d\n", lineno);                return RANGE_OP; }
-","                 { printf("[DELIM] COMMA at line %d\n", lineno);                   return COMMA; }
+"|"                 { return SEMICOLON; }
+"<:"                { return LPAREN; }
+":>"                { return RPAREN; }
+"[:"                { return LBRACE; }
+":]"                { return RBRACE; }
+".."                { return RANGE_OP; }
+","                 { return COMMA; }
 
 {FLOAT_EXP}         {
                         yylval.fval = atof(yytext);
-                        printf("[LIT] Float literal: %s at line %d\n", yytext, lineno);
                         return FLOAT_LITERAL;
                     }
 
 {INT_LIT}           {
                         yylval.ival = atoi(yytext);
-                        printf("[LIT] Int literal: %s at line %d\n", yytext, lineno);
                         return INT_LITERAL;
                     }
 
 \"[^\"\n]*\"        {
                         yylval.sval = strdup(yytext + 1);
                         yylval.sval[yyleng - 2] = '\0';
-                        printf("[LIT] String literal: %s at line %d\n", yylval.sval, lineno);
                         return STRING_LITERAL;
                     }
 
@@ -161,13 +154,11 @@ FLOAT_EXP   {FLOAT_LIT}{EXP}?
                     
 \'[^\'\n]\'         {
                         yylval.ival = yytext[1];
-                        printf("[LIT] Char literal: %c at line %d\n", yytext[1], lineno);
                         return INT_LITERAL;
                     }
 
 {ID}                {
                         yylval.sval = strdup(yytext);
-                        printf("[IDENT] Identifier: %s at line %d\n", yytext, lineno);
                         return IDENTIFIER;
                     }
 
