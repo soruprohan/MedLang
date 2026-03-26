@@ -1,0 +1,131 @@
+## test_stmt_returns.med
+## Tests for stmt_list_returns() correctness
+## Expected: ALL functions pass semantic analysis, correct output printed
+
+## ─────────────────────────────────────────────
+## TEST 1 — Bug 1 fix: Discharge is NOT the last statement
+## Before fix: stmt_list_returns skips A,B and only sees C (NODE_DECL)
+## → wrongly reports missing Discharge
+## After fix:  recurses into nested NODE_STMT_LIST, finds Discharge at A
+## ─────────────────────────────────────────────
+Organ test1 <: :> [:
+    Discharge 100 |         ## Discharge is FIRST, not last
+    Organ dead1 =: 5 |      ## dead code — should not affect return check
+    Organ dead2 =: 10 |     ## dead code — should not affect return check
+:]
+
+## ─────────────────────────────────────────────
+## TEST 2 — Bug 2 fix: Discharge inside Diagnose/Alternate (NODE_BLOCK)
+## Before fix: stmt->list.head wrong field for NODE_BLOCK
+## → wrongly reports missing Discharge even though both branches return
+## After fix:  reads stmt->binop.left correctly, finds Discharge in both blocks
+## ─────────────────────────────────────────────
+Organ test2 <: Organ x :> [:
+    Diagnose <: x AboveNormal 0 :> [:
+        Discharge 1 |
+    :] Alternate [:
+        Discharge 0 |
+    :]
+:]
+
+## ─────────────────────────────────────────────
+## TEST 3 — Combined: Discharge inside nested Diagnose, not the last statement
+## Tests both bugs together
+## ─────────────────────────────────────────────
+Organ test3 <: Organ x :> [:
+    Organ temp =: x DoseMultiply 2 |
+    Diagnose <: temp AboveNormal 10 :> [:
+        Observe <: "high\n" :> |
+        Discharge 2 |
+    :] Alternate [:
+        Observe <: "low\n" :> |
+        Discharge 1 |
+    :]
+    Organ unreachable =: 99 |    ## dead code after if/else both return
+:]
+
+## ─────────────────────────────────────────────
+## TEST 4 — Deeply nested Diagnose inside Diagnose
+## Recurse must go deep enough to find all Discharges
+## ─────────────────────────────────────────────
+Organ test4 <: Organ x, Organ y :> [:
+    Diagnose <: x AboveNormal 0 :> [:
+        Diagnose <: y AboveNormal 0 :> [:
+            Discharge 3 |
+        :] Alternate [:
+            Discharge 2 |
+        :]
+    :] Alternate [:
+        Discharge 1 |
+    :]
+:]
+
+## ─────────────────────────────────────────────
+## TEST 5 — Multiple statements BEFORE the Discharge
+## Specifically targets Bug 1: A, B, C, D all before Discharge
+## ─────────────────────────────────────────────
+Organ test5 <: :> [:
+    Organ a =: 1 |
+    Organ b =: 2 |
+    Organ c =: 3 |
+    Organ d =: 4 |
+    Discharge a DosePlus b DosePlus c DosePlus d |
+:]
+
+## ─────────────────────────────────────────────
+## Admission — calls all test functions and prints results
+## ─────────────────────────────────────────────
+Admission <: :> [:
+    Observe <: "=== stmt_list_returns() Bug Fix Tests ===\n" :> |
+
+    ## Test 1
+    Organ r1 =: test1 <: :> |
+    Observe <: "\nTest 1 (Discharge not last stmt): %d\n", r1 :> |
+    Diagnose <: r1 Match 100 :> [:
+        Observe <: "PASS\n" :> |
+    :] Alternate [:
+        Observe <: "FAIL\n" :> |
+    :]
+
+    ## Test 2
+    Organ r2a =: test2 <: 5 :> |
+    Organ r2b =: test2 <: 0 :> |
+    Observe <: "\nTest 2 (Discharge inside if/else blocks): %d, %d\n", r2a, r2b :> |
+    Diagnose <: r2a Match 1 Both r2b Match 0 :> [:
+        Observe <: "PASS\n" :> |
+    :] Alternate [:
+        Observe <: "FAIL\n" :> |
+    :]
+
+    ## Test 3
+    Organ r3a =: test3 <: 10 :> |
+    Organ r3b =: test3 <: 3 :> |
+    Observe <: "\nTest 3 (Combined bugs): %d, %d\n", r3a, r3b :> |
+    Diagnose <: r3a Match 2 Both r3b Match 1 :> [:
+        Observe <: "PASS\n" :> |
+    :] Alternate [:
+        Observe <: "FAIL\n" :> |
+    :]
+
+    ## Test 4
+    Organ r4a =: test4 <: 1, 1 :> |
+    Organ r4b =: test4 <: 1, 0 :> |
+    Organ r4c =: test4 <: 0, 0 :> |
+    Observe <: "\nTest 4 (Deeply nested if/else): %d, %d, %d\n", r4a, r4b, r4c :> |
+    Diagnose <: r4a Match 3 Both r4b Match 2 Both r4c Match 1 :> [:
+        Observe <: "PASS\n" :> |
+    :] Alternate [:
+        Observe <: "FAIL\n" :> |
+    :]
+
+    ## Test 5
+    Organ r5 =: test5 <: :> |
+    Observe <: "\nTest 5 (Many stmts before Discharge): %d\n", r5 :> |
+    Diagnose <: r5 Match 10 :> [:
+        Observe <: "PASS\n" :> |
+    :] Alternate [:
+        Observe <: "FAIL\n" :> |
+    :]
+
+    Observe <: "\n=== Done ===\n" :> |
+:]

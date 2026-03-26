@@ -171,6 +171,11 @@ static int stmt_list_returns(ASTNode *list_node) {
             switch (stmt->type) {
             case NODE_RETURN:
                 return 1;
+            
+            case NODE_STMT_LIST:                    
+                if (stmt_list_returns(stmt))
+                    return 1;
+                break;    
 
             case NODE_IF:
                 if (stmt->ifnode.else_block &&
@@ -180,7 +185,7 @@ static int stmt_list_returns(ASTNode *list_node) {
                 break;
 
             case NODE_BLOCK:
-                if (stmt_list_returns(stmt->list.head))
+                if (stmt_list_returns(stmt->binop.left))
                     return 1;
                 break;
 
