@@ -40,18 +40,22 @@ static long vlong(Val v)   { return (long)v.num; }
 typedef struct Var { char *name; Val val; int sealed; struct Var *next; } Var;
 typedef struct Env { Var *vars; struct Env *parent; } Env;
 
+//env_push — Enter a new scope
 static Env *env_push(Env *p) {
     Env *e = calloc(1, sizeof(Env)); e->parent = p; return e;
 }
+//env_pop — Exit a scope, freeing all variables in it
 static void env_pop(Env *e) {
     for (Var *v = e->vars, *n; v; v = n) { n=v->next; free(v->name); free(v); }
     free(e);
 }
+//env_set — Declare a variable
 static void env_set(Env *e, const char *name, Val val, int sealed) {
     Var *v = calloc(1, sizeof(Var));
     v->name = strdup(name); v->val = val; v->sealed = sealed;
     v->next = e->vars; e->vars = v;
 }
+//env_find — Look up a variable
 static Var *env_find(Env *e, const char *name) {
     for (Env *c = e; c; c = c->parent)
         for (Var *v = c->vars; v; v = v->next)
@@ -63,16 +67,21 @@ static Var *env_find(Env *e, const char *name) {
    Function table
    ================================================================ */
 #define MAX_FUNCS 128
-static struct { char *name; ASTNode *def; } ftab[MAX_FUNCS];
+static struct { char *name; ASTNode *def; } ftab[MAX_FUNCS]; //an array of function names and their ASTNode definitions
 static int fcount = 0;
 
+//freg — Register a function
 static void freg(ASTNode *def) {
     if (fcount < MAX_FUNCS) { ftab[fcount].name=def->func.name; ftab[fcount++].def=def; }
 }
+
+//flookup — Find a function by name
 static ASTNode *flookup(const char *name) {
     for (int i=0; i<fcount; i++) if (strcmp(ftab[i].name,name)==0) return ftab[i].def;
     return NULL;
 }
+
+//This recursively walks the entire AST at startup to find and register all function definitions before any code runs
 static void collect_funcs(ASTNode *n) {
     if (!n) return;
     if (n->type==NODE_STMT_LIST) { collect_funcs(n->list.head); collect_funcs(n->list.tail); return; }
@@ -103,20 +112,23 @@ static Res stmts(ASTNode *n, Env *e);
    ================================================================ */
 static void print_esc(const char *s) {
     for (; *s; s++) {
-        if (*s=='\\' && s[1]) {
+        if (*s=='\\' && s[1]) { 
             switch (*++s) {
-                case 'n': putchar('\n'); break; case 't': putchar('\t'); break;
-                case 'r': putchar('\r'); break; case '\\': putchar('\\'); break;
-                case '"': putchar('"');  break; default: putchar(*s); break;
+                case 'n':  putchar('\n'); break;   // newline
+                case 't':  putchar('\t'); break;   // tab
+                case 'r':  putchar('\r'); break;   // carriage return
+                case '\\': putchar('\\'); break;   // literal backslash
+                case '"':  putchar('"');  break;   // literal quote
+                default:   putchar(*s);   break;   // unknown — just print as-is
             }
-        } else putchar(*s);
+        } else putchar(*s);   //for all the non backlash cases, just print the character as is
     }
 }
 
 /* ================================================================
    Observe (printf): first arg is format string or bare value.
    ================================================================ */
-static void do_observe(ASTNode *n, Env *e) {
+static void do_observe(ASTNode *n, Env *e) {  //here a function call node is passed in
     ArgNode *a = n->call.args;
     if (!a) return;
     Val first = eval(a->expr, e);
@@ -127,9 +139,12 @@ static void do_observe(ASTNode *n, Env *e) {
     for (; *p; p++) {
         if (*p=='\\' && p[1]) {
             switch (*++p) {
-                case 'n': putchar('\n'); break; case 't': putchar('\t'); break;
-                case 'r': putchar('\r'); break; case '\\': putchar('\\'); break;
-                case '"': putchar('"');  break; default: putchar(*p); break;
+                case 'n': putchar('\n'); break;
+                case 't': putchar('\t'); break;
+                case 'r': putchar('\r'); break; 
+                case '\\': putchar('\\'); break;
+                case '"': putchar('"');  break; 
+                default: putchar(*p); break;
             }
             continue;
         }
@@ -250,9 +265,15 @@ static Val eval(ASTNode *n, Env *e) {
             Env *fs = env_push(global);
             ParamNode *pm = def->func.params;
             ArgNode   *ag = n->call.args;
+
+            //Bind Arguments to Parameters
             for (; pm && ag; pm=pm->next, ag=ag->next)
                 env_set(fs, pm->name, eval(ag->expr,e), 0);
+              //If the caller passed fewer arguments than parameters
+              // but foo expects two params), the remaining parameters are initialized to zero instead of crashing.
+              // A safety measure for mismatched argument counts.  
             for (; pm; pm=pm->next) env_set(fs, pm->name, vzero(), 0);
+
             Res r = stmts(def->func.body, fs);
             env_pop(fs);
             return r.sig==SIG_RETURN ? r.val : vzero();
@@ -269,6 +290,7 @@ static Res stmts(ASTNode *n, Env *e) {
     if (!n) return R_NONE;
     if (n->type == NODE_STMT_LIST) {
         Res r = stmts(n->list.head, e);
+        //means break or continue or return signal up the chain without executing the rest of the statements
         if (r.sig != SIG_NONE) return r;
         return n->list.tail ? exec(n->list.tail, e) : R_NONE;
     }
@@ -382,7 +404,7 @@ int interp_run(ASTNode *root) {
     printf("[MedLang] --- Program Output ---\n");
     Res r = stmts(admission->func.body, es);
     printf("\n[MedLang] --- Execution Complete ---\n");
-    if (r.sig == SIG_RETURN) printf("[MedLang] Admission returned: %g\n", r.val.num);
+    //if (r.sig == SIG_RETURN) printf("[MedLang] Admission returned: %g\n", r.val.num);
 
     env_pop(es);
     env_pop(global);

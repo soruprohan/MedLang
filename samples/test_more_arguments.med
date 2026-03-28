@@ -1,0 +1,7 @@
+Organ add(Organ a, Organ b) {
+    Discharge a + b;
+}
+
+Admission() {
+    Organ result =: add(1, 2, 3);
+}

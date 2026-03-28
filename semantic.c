@@ -2,13 +2,12 @@
    Phase 3: Semantic Analysis
 
    Checks implemented:
-     1. Undeclared variable use
-     2. Double declaration in same scope
+     1. Double declaration in same scope
+     2. Undeclared variable use
      3. Sealed (immutable) reassignment
      4. Type mismatch / strong typing
-     5. NoSample access without null-check guard
-     6. Missing Discharge (return) path in non-void functions
-     7. Range-loop direction warning (e.g. Cycle <: i in 10..1 :>)
+     5. Missing Discharge (return) path in non-void functions
+     6. Range-loop direction warning (e.g. Cycle <: i in 10..1 :>)
 */
 
 #include <stdio.h>
@@ -67,7 +66,7 @@ static int types_compatible(const char *lhs, const char *rhs) {
     if (strcmp(lhs, "MajorOrgan") == 0)
         return strcmp(rhs, "Organ") == 0;
 
-      if (strcmp(lhs, "Cell") == 0)
+    if (strcmp(lhs, "Cell") == 0)
         return strcmp(rhs, "Organ") == 0;
 
     if (strcmp(lhs, "Tissue") == 0)
@@ -149,74 +148,6 @@ static void analyze(ASTNode *node, Scope *scope,
                     int *has_return);
 
 /* ============================================================
-   Check whether a statement list unconditionally returns.
-   ============================================================ */
-static int stmt_list_returns(ASTNode *list_node) {
-    if (!list_node) return 0;
-
-    ASTNode *cur = list_node;
-    while (cur) {
-        ASTNode *stmt = NULL;
-        ASTNode *next = NULL;
-
-        if (cur->type == NODE_STMT_LIST) {
-            stmt = cur->list.head;
-            next = cur->list.tail;
-        } else {
-            stmt = cur;
-            next = NULL;
-        }
-
-        if (stmt) {
-            switch (stmt->type) {
-            case NODE_RETURN:
-                return 1;
-            
-            case NODE_STMT_LIST:                    
-                if (stmt_list_returns(stmt))
-                    return 1;
-                break;    
-
-            case NODE_IF:
-                if (stmt->ifnode.else_block &&
-                    stmt_list_returns(stmt->ifnode.then_block) &&
-                    stmt_list_returns(stmt->ifnode.else_block))
-                    return 1;
-                break;
-
-            case NODE_BLOCK:
-                if (stmt_list_returns(stmt->binop.left))
-                    return 1;
-                break;
-
-            default:
-                break;
-            }
-        }
-        cur = next;
-    }
-    return 0;
-}
-
-/* ============================================================
-   NoSample guard detection helper (unused directly but kept
-   for reference — the real guard logic is inline in NODE_IF)
-   ============================================================ */
-static int is_nosample_guard(ASTNode *stmt, const char *name) {
-    if (!stmt || stmt->type != NODE_IF) return 0;
-    ASTNode *cond = stmt->ifnode.cond;
-    if (!cond || cond->type != NODE_BINOP) return 0;
-    if (cond->binop.op != NEQ && cond->binop.op != EQ) return 0;
-    ASTNode *left  = cond->binop.left;
-    ASTNode *right = cond->binop.right;
-    if (left  && left->type  == NODE_IDENT && strcmp(left->sval,  name) == 0)
-        return 1;
-    if (right && right->type == NODE_IDENT && strcmp(right->sval, name) == 0)
-        return 1;
-    return 0;
-}
-
-/* ============================================================
    Core recursive analysis walker
    ============================================================ */
 static void analyze(ASTNode *node, Scope *scope,
@@ -270,14 +201,15 @@ static void analyze(ASTNode *node, Scope *scope,
         break;
     }
 
-    /* ---- NoSample declaration ---- */
+    /* ---- NoSample declaration — treated as a plain declaration ---- */
     case NODE_NOSAMPLE_DECL: {
         const char *vname = node->decl.name;
         const char *vtype = node->decl.datatype;
-        if (scope_add(scope, vname, vtype, 0, 1, node->lineno) == -1) {
+        if (scope_add(scope, vname, vtype, 0, 0, node->lineno) == -1) {
             sem_error(node->lineno,
                       "'%s' already declared in this scope", vname);
         }
+        scope_mark_init(scope, vname);
         break;
     }
 
@@ -314,47 +246,15 @@ static void analyze(ASTNode *node, Scope *scope,
     /* ---- Identifier reference ---- */
     case NODE_IDENT: {
         const char *vname = node->sval;
-        Symbol *sym = scope_lookup(scope, vname);
-
-        if (!sym) {
+        if (!scope_lookup(scope, vname)) {
             sem_error(node->lineno,
                       "'%s' used before declaration", vname);
-            break;
-        }
-
-        if (sym->is_nosample && !sym->initialized) {
-            sem_error(node->lineno,
-                "'%s' is NoSample; check it for NoSample before use",
-                vname);
         }
         break;
     }
 
     /* ---- If / Else (Diagnose / Alternate) ---- */
     case NODE_IF: {
-        /* Detect NoSample guard BEFORE analyzing the condition so the
-           NODE_IDENT check does not fire on the guarded variable while
-           it appears inside the condition itself.
-           Pattern:  patient MisMatch NoSample
-           In the AST this is NEQ(NODE_IDENT("patient"), NODE_INT_LIT(0))
-           because the parser maps bare `NoSample` in expression position
-           to make_int_lit(0, lineno).                                   */
-        Symbol *guarded_sym = NULL;
-        ASTNode *cond = node->ifnode.cond;
-        if (cond && cond->type == NODE_BINOP &&
-            (cond->binop.op == NEQ || cond->binop.op == EQ)) {
-            ASTNode *lhs = cond->binop.left;
-            ASTNode *rhs = cond->binop.right;
-            if (lhs && lhs->type == NODE_IDENT &&
-                rhs && rhs->type == NODE_INT_LIT && rhs->ival == 0) {
-                Symbol *s = scope_lookup(scope, lhs->sval);
-                if (s && s->is_nosample) {
-                    guarded_sym = s;
-                    s->initialized = 1;   /* temporarily safe */
-                }
-            }
-        }
-
         analyze(node->ifnode.cond, scope, enclosing_ret_type, has_return);
 
         int then_returns = 0;
@@ -362,9 +262,6 @@ static void analyze(ASTNode *node, Scope *scope,
         analyze(node->ifnode.then_block, then_scope,
                 enclosing_ret_type, &then_returns);
         scope_free(then_scope);
-
-        /* Restore NoSample unsafe status after the guard block */
-        if (guarded_sym) guarded_sym->initialized = 0;
 
         int else_returns = 0;
         if (node->ifnode.else_block) {
@@ -483,23 +380,8 @@ static void analyze(ASTNode *node, Scope *scope,
 
     /* ---- Function call ---- */
     case NODE_FUNC_CALL: {
-        const char *fname = node->call.name;
-
-        static const char *builtins[] = {
-            "Power","RootCause","AbsDose","RoundDown","RoundUp",
-            "Sine","Cosine","Tangent","IsCritical","Observe","Record", NULL
-        };
-        int is_builtin = 0;
-        for (int i = 0; builtins[i]; i++)
-            if (strcmp(fname, builtins[i]) == 0) { is_builtin = 1; break; }
-
-        if (!is_builtin) {
-            Symbol *sym = scope_lookup(scope, fname);
-            if (!sym)
-                sem_error(node->lineno,
-                          "function '%s' called before declaration", fname);
-        }
-
+        /* Recurse into arguments only — function existence is guaranteed
+           by the interpreter's collect_funcs() pre-pass */
         for (ArgNode *a = node->call.args; a; a = a->next)
             analyze(a->expr, scope, enclosing_ret_type, has_return);
         break;
