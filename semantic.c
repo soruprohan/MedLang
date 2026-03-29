@@ -410,7 +410,7 @@ static void analyze(ASTNode *node, Scope *scope,
     case NODE_RETURN: {
         if (has_return) *has_return = 1;
 
-        //biop.left null in return means only Discharge without an expression,
+        //binop.left null in return means only Discharge without an expression,
         // which is only valid if the enclosing function has a void (NullTissue) return type.
         if (!node->binop.left) {
             if (enclosing_ret_type &&

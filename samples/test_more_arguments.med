@@ -1,7 +1,8 @@
-Organ add(Organ a, Organ b) {
-    Discharge a + b;
-}
+Organ add<:Organ a, Organ b:> [:
+    Discharge a DosePlus b|
+:]
 
-Admission() {
-    Organ result =: add(1, 2, 3);
-}
+Admission<: :> [:
+    Organ result =: add<:1,2,3:>|
+    Observe<:"%d", result :>|
+:]

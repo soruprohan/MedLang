@@ -13,6 +13,8 @@ extern int lineno;
 
 /* The root of the entire AST — set by the program rule */
 ASTNode *ast_root = NULL;
+
+int parse_error_count = 0;
 %}
 
 /* ============================================================
@@ -98,7 +100,6 @@ program
         {
             $$ = make_program($1);
             ast_root = $$;
-            printf("[PARSE] Program parsed successfully.\n");
         }
     | /* empty */
         {
@@ -114,7 +115,7 @@ top_level_list
     | top_level_list top_level_item
         { $$ = make_stmt_list($1, $2); }
     ;
-
+//top level item means stuff that can appear on the global scope
 top_level_item
     : var_decl        { $$ = $1; }
     | sealed_var_decl { $$ = $1; }
@@ -240,10 +241,11 @@ stmt
     | nosample_decl     { $$ = $1; }
     | block             { $$ = $1; }
     | expr_stmt         { $$ = $1; }
-    /* --- error recovery: skip to next | and continue --- */
+    /* --- error recovery: skip to next ; and continue --- */
     | error SEMICOLON
         {
             yyerrok;
+            parse_error_count++;
             $$ = NULL;
             fprintf(stderr,
                 "[MedLang] Syntax error near line %d, resuming after '|'\n",
@@ -297,7 +299,7 @@ diagnose_stmt
 
 /* ============================================================
    Screening / Result / IdiopathicCase  (switch/case/default)
-   Uses a plain block node for the body; semantic phase handles cases
+   Uses a plain block node for the body
    ============================================================ */
 
 screening_stmt
@@ -523,6 +525,12 @@ int main(int argc, char **argv) {
     int parse_result = yyparse();
     if (parse_result != 0)
         return parse_result;
+
+    /* Check if errors were recovered during parsing */
+    if (parse_error_count > 0) {
+        fprintf(stderr, "[MedLang] %d parse error(s) found. Compilation aborted.\n", parse_error_count);
+        return 1;
+    }
 
     printf("[MedLang] Parse completed successfully.\n");
 

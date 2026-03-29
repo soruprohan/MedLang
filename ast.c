@@ -1,5 +1,4 @@
 /* ast.c — AST constructor implementations
-   Phase 2: Syntax Analysis & AST Construction
 */
 
 #include <stdio.h>
@@ -196,8 +195,6 @@ ASTNode *make_block(ASTNode *stmts, int line) {
 
 /* ============================================================
    Statement list  (right-linear: head → tail chain)
-   append(existing_list, new_stmt) pattern:
-     make_stmt_list(existing, new_stmt)
    ============================================================ */
 ASTNode *make_stmt_list(ASTNode *head, ASTNode *tail) {
     ASTNode *n = new_node(NODE_STMT_LIST, 0);

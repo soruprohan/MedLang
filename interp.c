@@ -1,5 +1,5 @@
 /* interp.c -AST Interpreter
-   Executes the program directly from the AST, producing real output.
+   Executes the program directly from the AST.
 */
 
 #include <stdio.h>
@@ -9,7 +9,7 @@
 
 #include "ast.h"
 #include "interp.h"
-#include "medlang.tab.h"   /* PLUS, MINUS, EQ, NEQ, GT, LT, GEQ, LEQ, ... */
+#include "medlang.tab.h" 
 
 /* ================================================================
    Runtime value: numeric (double) or string
@@ -27,7 +27,7 @@ static long vlong(Val v)   { return (long)v.num; }
 typedef struct Var { char *name; Val val; int sealed; struct Var *next; } Var;
 typedef struct Env { Var *vars; struct Env *parent; } Env;
 
-//env_push — Enter a new scope
+//env_push — Enter/create a new scope
 static Env *env_push(Env *p) {
     Env *e = calloc(1, sizeof(Env)); e->parent = p; return e;
 }
@@ -167,8 +167,8 @@ static void do_record(ASTNode *n, Env *e) {
         p++;
         if (!*p) break;
         ASTNode *ex = rest->expr; rest = rest->next;
-        if (!ex || ex->type != NODE_IDENT) continue;
-        Var *var = env_find(e, ex->sval);
+        if (!ex || ex->type != NODE_IDENT) continue; //only identifiers can be passed to Record for assignment, if it's not an identifier just skip it and move on to the next one
+        Var *var = env_find(e, ex->sval); //find the variable in scope
         if (!var) continue;
         switch (*p) {
             case 'd': case 'i': { long t;   if(scanf("%ld",&t)==1)  var->val=vnum(t); break; }
@@ -255,6 +255,7 @@ static Val eval(ASTNode *n, Env *e) {
 
             //Bind Arguments to Parameters
             for (; pm && ag; pm=pm->next, ag=ag->next)
+            //global scope e caller er local args calculate kore called function er jonno global scope e value gula store kora
                 env_set(fs, pm->name, eval(ag->expr,e), 0);
               //If the caller passed fewer arguments than parameters
               // but foo expects two params, the remaining parameters are initialized to zero instead of crashing.
@@ -276,12 +277,12 @@ static Val eval(ASTNode *n, Env *e) {
 static Res stmts(ASTNode *n, Env *e) {
     if (!n) return R_NONE;
     if (n->type == NODE_STMT_LIST) {
-        Res r = stmts(n->list.head, e);
+        Res r = stmts(n->list.head, e); //  recurse LEFT (deep) first
         //means break or continue or return signal up the chain without executing the rest of the statements
-        if (r.sig != SIG_NONE) return r;
-        return n->list.tail ? exec(n->list.tail, e) : R_NONE;
+        if (r.sig != SIG_NONE) return r; //early exit if return/break
+        return n->list.tail ? exec(n->list.tail, e) : R_NONE; //then execute RIGHT (newest)
     }
-    return exec(n, e);
+    return exec(n, e); //if anything other than a statement list node is passed in, just execute it
 }
 
 /* ================================================================
