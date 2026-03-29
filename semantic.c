@@ -50,7 +50,7 @@ static void sem_warn(int line, const char *fmt, ...) {
 }
 
 /* ============================================================
-   Type compatibility table
+   Type compatibility table, Return 1 (true) = compatible, Return 0 (false) = incompatible
    ============================================================ */
 static int types_compatible(const char *lhs, const char *rhs) {
     if (!lhs || !rhs) return 1;
@@ -100,14 +100,17 @@ static const char *infer_type(ASTNode *node, Scope *scope) {
     }
 
     case NODE_BINOP: {
+        // For binary ops, we need to infer the types of both sides and then apply type rules
         const char *lt = infer_type(node->binop.left,  scope);
         const char *rt = infer_type(node->binop.right, scope);
         int op = node->binop.op;
 
+        //Comparison/logical ops always produce a boolean-like integer:
         if (op == EQ || op == NEQ || op == GT  || op == LT  ||
             op == GEQ || op == LEQ || op == AND || op == OR)
             return "Organ";
 
+        // Arithmetic ops use type promotion (widening)
         if (!lt || !rt) return NULL;
         if (strcmp(lt, "Diabetes") == 0 || strcmp(rt, "Diabetes") == 0)
             return "Diabetes";
@@ -130,6 +133,7 @@ static const char *infer_type(ASTNode *node, Scope *scope) {
             return "Flow";
         if (strcmp(n, "IsCritical") == 0)
             return "Organ";
+        // For user-defined functions, we would look up the function definition in the symbol table and return its declared return type.
         Symbol *sym = scope_lookup(scope, n);
         if (sym) return sym->type;
         return NULL;
@@ -165,10 +169,12 @@ static void analyze(ASTNode *node, Scope *scope,
     /* ---- Statement list ---- */
     case NODE_STMT_LIST: {
         ASTNode *cur = node;
+        //This iterates through each statement one by one, analyzing them in order. 
         while (cur && cur->type == NODE_STMT_LIST) {
             analyze(cur->list.head, scope, enclosing_ret_type, has_return);
             cur = cur->list.tail;
         }
+        //This final if (cur) handles the last node which isn't a NODE_STMT_LIST itself.
         if (cur) analyze(cur, scope, enclosing_ret_type, has_return);
         break;
     }
@@ -190,6 +196,7 @@ static void analyze(ASTNode *node, Scope *scope,
             analyze(node->decl.init, scope, enclosing_ret_type, has_return);
 
             const char *rhs_type = infer_type(node->decl.init, scope);
+            //if the initializer's type is known, check compatibility with the declared type. If incompatible, report a type error.
             if (rhs_type && !types_compatible(vtype, rhs_type)) {
                 sem_error(node->lineno,
                     "cannot assign %s value to %s variable '%s'",
@@ -221,10 +228,12 @@ static void analyze(ASTNode *node, Scope *scope,
         if (!sym) {
             sem_error(node->lineno,
                       "'%s' used before declaration", vname);
+             //still analyze the RHS to catch any errors there, even though the LHS variable is undeclared
             analyze(node->assign.expr, scope, enclosing_ret_type, has_return);
             break;
         }
 
+        //immutable (Sealed) variables cannot be reassigned after initialization. If the variable is Sealed and already initialized, report an error.
         if (sym->is_sealed && sym->initialized) {
             sem_error(node->lineno,
                       "'%s' is Sealed and cannot be reassigned", vname);
@@ -232,6 +241,7 @@ static void analyze(ASTNode *node, Scope *scope,
 
         analyze(node->assign.expr, scope, enclosing_ret_type, has_return);
 
+        //Check for type compatibility between the variable's declared type and the type of the expression being assigned to it
         const char *rhs_type = infer_type(node->assign.expr, scope);
         if (rhs_type && !types_compatible(sym->type, rhs_type)) {
             sem_error(node->lineno,
@@ -259,18 +269,18 @@ static void analyze(ASTNode *node, Scope *scope,
 
         int then_returns = 0;
         Scope *then_scope = scope_new(scope);
-        analyze(node->ifnode.then_block, then_scope,
-                enclosing_ret_type, &then_returns);
+        analyze(node->ifnode.then_block, then_scope, enclosing_ret_type, &then_returns);
+
         scope_free(then_scope);
 
         int else_returns = 0;
         if (node->ifnode.else_block) {
             Scope *else_scope = scope_new(scope);
-            analyze(node->ifnode.else_block, else_scope,
-                    enclosing_ret_type, &else_returns);
+            analyze(node->ifnode.else_block, else_scope, enclosing_ret_type, &else_returns);
             scope_free(else_scope);
         }
 
+        // only guaranteed if BOTH branches return and there is a return type to begin with
         if (then_returns && else_returns && has_return)
             *has_return = 1;
         break;
@@ -278,6 +288,8 @@ static void analyze(ASTNode *node, Scope *scope,
 
     /* ---- While loop (Continuous) ---- */
     case NODE_WHILE: {
+        //condition belongs to the outer scope, but the body of the loop gets its own inner scope
+        // (since variables declared inside the loop body shouldn't be visible outside the loop)
         analyze(node->loop.cond, scope, enclosing_ret_type, has_return);
         Scope *loop_scope = scope_new(scope);
         int loop_ret = 0;
@@ -300,6 +312,7 @@ static void analyze(ASTNode *node, Scope *scope,
     case NODE_FOR: {
         Scope *for_scope = scope_new(scope);
         int for_ret = 0;
+        //everything in the for loop header (init, condition, update) is analyzed within the same scope as the loop body
         analyze(node->forloop.init,   for_scope, enclosing_ret_type, &for_ret);
         analyze(node->forloop.cond,   for_scope, enclosing_ret_type, &for_ret);
         analyze(node->forloop.update, for_scope, enclosing_ret_type, &for_ret);
@@ -308,7 +321,7 @@ static void analyze(ASTNode *node, Scope *scope,
         break;
     }
 
-    /* ---- Range-based for (Cycle <: i in 1..10 :>) ---- */
+    /* ---- Range-based for (Cycle <: i in 1 .. 10 :>) ---- */
     case NODE_FOR_RANGE: {
         int from = node->range_loop.from;
         int to   = node->range_loop.to;
@@ -320,6 +333,8 @@ static void analyze(ASTNode *node, Scope *scope,
         }
 
         Scope *range_scope = scope_new(scope);
+        //automatically injects the loop variable into the range scope as type "Organ" (int) and marks it initialized,
+        // since it's implicitly declared by the loop syntax
         scope_add(range_scope, node->range_loop.var, "Organ",
                   0, 0, node->lineno);
         scope_mark_init(range_scope, node->range_loop.var);
@@ -365,8 +380,12 @@ static void analyze(ASTNode *node, Scope *scope,
         }
 
         int fn_has_return = 0;
+        //The body is recursively analyzed, passing ret_type down and &fn_has_return to be written into
         analyze(node->func.body, fn_scope, ret_type, &fn_has_return);
         scope_free(fn_scope);
+
+        //the missing return check: if the function declared a non-void return type but 
+        //no guaranteed Discharge was found anywhere in the body, that's a semantic error
 
         if (ret_type &&
             strcmp(ret_type, "NullTissue") != 0 &&
@@ -391,6 +410,8 @@ static void analyze(ASTNode *node, Scope *scope,
     case NODE_RETURN: {
         if (has_return) *has_return = 1;
 
+        //biop.left null in return means only Discharge without an expression,
+        // which is only valid if the enclosing function has a void (NullTissue) return type.
         if (!node->binop.left) {
             if (enclosing_ret_type &&
                 strcmp(enclosing_ret_type, "NullTissue") != 0) {
@@ -436,7 +457,7 @@ static void analyze(ASTNode *node, Scope *scope,
     default:
         break;
 
-    } /* end switch */
+    } 
 } /* end analyze() */
 
 /* ============================================================

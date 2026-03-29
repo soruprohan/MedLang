@@ -1,0 +1,7 @@
+Organ wrongReturn <: :> [:
+    Discharge "hello" |
+:]
+
+Admission <: :> [:
+    Organ x =: 0 |
+:]

@@ -1,5 +1,5 @@
-## test_operators.med — All operators: arithmetic, relational, logical, unary
-## Expected: PASS, TAC generated
+## All operators: arithmetic, relational, logical, unary
+## Expected: PASS
 
 Admission <: :> [:
     Organ a =: 10 |

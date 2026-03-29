@@ -1,6 +1,0 @@
-NullTissue logDose <: Organ dose :> [:
-    Organ temp =: dose |
-:]
-
-Admission <: :> [:
-:]

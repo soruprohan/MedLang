@@ -1,5 +1,4 @@
 ## test_screening.med — Screening (switch), Result (case), IdiopathicCase (default)
-## Expected: PASS, TAC generated
 
 Admission <: :> [:
     Organ code =: 2 |

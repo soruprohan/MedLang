@@ -1,0 +1,5 @@
+Admission <: :> [:
+    Organ heartRate =: 72 |
+    heartRate =: "fast" |
+    Observe <: "heartRate: %d\n", heartRate :> |
+:]

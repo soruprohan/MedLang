@@ -1,5 +1,4 @@
 ## test_io.med — Observe (printf) and Record (scanf)
-## Expected: PASS, TAC generated
 
 Admission <: :> [:
     Organ age |

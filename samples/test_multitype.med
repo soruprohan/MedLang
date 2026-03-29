@@ -1,5 +1,4 @@
-## test_multitype.med — Multiple data types and widening
-## Expected: PASS, TAC generated
+## Expected: PASS
 
 Admission <: :> [:
     Organ i =: 10 |

@@ -519,24 +519,23 @@ int main(int argc, char **argv) {
         }
     }
 
-    /* --- Phase 2: Syntax Analysis --- */
+    /* Syntax Analysis */
     int parse_result = yyparse();
     if (parse_result != 0)
         return parse_result;
 
     printf("[MedLang] Parse completed successfully.\n");
 
-    /* --- Phase 3: Semantic Analysis --- */
+    /* Semantic Analysis */
     if (ast_root) {
         int sem_result = analyze_program(ast_root);
         if (sem_result != 0) {
-            fprintf(stderr,
-                "[MedLang] Semantic errors found.\n");
+            fprintf(stderr,"[MedLang] Semantic errors found.\n");
             return sem_result;
         }
     }
 
-    /* --- Phase 4: AST Interpreter --- */  
+    /* AST Interpreter */  
     if (ast_root) {
         printf("[MedLang] Starting interpreter...\n");
         interp_run(ast_root);

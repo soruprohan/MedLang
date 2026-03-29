@@ -1,18 +1,5 @@
-/* interp.c — MedLang Phase 5: AST Interpreter
+/* interp.c -AST Interpreter
    Executes the program directly from the AST, producing real output.
-
-   Design (like chicken-language): all numeric values are stored as double.
-   Strings are kept separately. This collapses the type system at runtime
-   and eliminates all the float/int/double branching.
-
-   AST structural facts used here:
-     NODE_PROGRAM  -> binop.left  = top-level stmt_list
-     NODE_BLOCK    -> binop.left  = inner stmt_list
-     NODE_RETURN   -> binop.left  = expression (NULL for bare Discharge)
-     NODE_UNOP     -> binop.left  = operand
-     NODE_STMT_LIST is left-recursive:
-       list.head = accumulated chain (STMT_LIST or first stmt)
-       list.tail = newest single stmt
 */
 
 #include <stdio.h>
@@ -270,7 +257,7 @@ static Val eval(ASTNode *n, Env *e) {
             for (; pm && ag; pm=pm->next, ag=ag->next)
                 env_set(fs, pm->name, eval(ag->expr,e), 0);
               //If the caller passed fewer arguments than parameters
-              // but foo expects two params), the remaining parameters are initialized to zero instead of crashing.
+              // but foo expects two params, the remaining parameters are initialized to zero instead of crashing.
               // A safety measure for mismatched argument counts.  
             for (; pm; pm=pm->next) env_set(fs, pm->name, vzero(), 0);
 

@@ -1,0 +1,5 @@
+Admission <: :> [:
+    Tissue name =: "hello" |
+    Organ count =: name |
+    Observe <: "count: %d\n", count :> |
+:]
