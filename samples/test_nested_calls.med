@@ -1,5 +1,4 @@
 ## User functions calling other user functions
-## Expected: PASS
 
 Organ double <: Organ n :> [:
     Discharge n DoseMultiply 2 |

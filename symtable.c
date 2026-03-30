@@ -60,7 +60,7 @@ Symbol *scope_lookup(Scope *s, const char *name) {
 int scope_add(Scope *s, const char *name, const char *type,
               int is_sealed, int is_nosample, int lineno) {
     if (scope_lookup_local(s, name))
-        return -1;  /* double declaration */
+        return -1;  // double declaration
 
     Symbol *sym = (Symbol *)malloc(sizeof(Symbol));
     if (!sym) { fprintf(stderr, "[symtable] out of memory\n"); exit(1); }

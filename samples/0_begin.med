@@ -1,0 +1,4 @@
+Admission<: :>[:
+    Organ age=: 25|
+    Observe <:"Age %d\n", age:>|
+:]

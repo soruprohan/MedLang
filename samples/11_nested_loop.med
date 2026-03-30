@@ -1,0 +1,16 @@
+
+
+Admission <: :> [:
+    Organ i =: 1 |
+    Organ j =: 1 |
+
+    Continuous <: i MinSafe 3 :> [:
+        j =: 1 |
+        Continuous <: j MinSafe 3 :> [:
+            Organ product =: i DoseMultiply j |
+            Observe <: "%d x %d = %d\n", i, j, product :> |
+            j =: j DosePlus 1 |
+        :] 
+        i =: i DosePlus 1 |
+    :] 
+:] 

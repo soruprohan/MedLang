@@ -4,7 +4,7 @@
      1. Double declaration in same scope
      2. Undeclared variable use
      3. Sealed (immutable) reassignment
-     4. Type mismatch / strong typing
+     4. Type mismatch handling
      5. Missing Discharge (return) path in non-void functions
      6. Range-loop direction warning (e.g. Cycle <: i in 10..1 :>)
 */
@@ -146,16 +146,12 @@ static const char *infer_type(ASTNode *node, Scope *scope) {
 
  //  Forward declaration
    
-static void analyze(ASTNode *node, Scope *scope,
-                    const char *enclosing_ret_type,
-                    int *has_return);
+static void analyze(ASTNode *node, Scope *scope, const char *enclosing_ret_type, int *has_return);
 
 
   // Core recursive analysis walker
    
-static void analyze(ASTNode *node, Scope *scope,
-                    const char *enclosing_ret_type,
-                    int *has_return) {
+static void analyze(ASTNode *node, Scope *scope,const char *enclosing_ret_type, int *has_return) {
     if (!node) return;
 
     switch (node->type) {
@@ -398,8 +394,7 @@ static void analyze(ASTNode *node, Scope *scope,
 
     //  Function call
     case NODE_FUNC_CALL: {
-        // Recurse into arguments only — function existence is guaranteed
-        // by the interpreter's collect_funcs() pre-pass
+        // Recurse into arguments only
         for (ArgNode *a = node->call.args; a; a = a->next)
             analyze(a->expr, scope, enclosing_ret_type, has_return);
         break;

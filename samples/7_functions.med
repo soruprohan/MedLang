@@ -1,9 +1,6 @@
 ## 7_functions.med
 ## User-defined functions — BMI calculator with risk classification
 
-NullTissue printHeader <: :> [:
-    Observe <: "=== Patient BMI Report ===\n" :> |
-:]
 
 Flow calcBMI <: Flow weight, Flow height :> [:
     Discharge weight DoseDivide <: height DoseMultiply height :> |
@@ -54,3 +51,6 @@ Admission <: :> [:
     classifyBMI <: bmi3 :> |
 :]
 
+NullTissue printHeader <: :> [:
+    Observe <: "=== Patient BMI Report ===\n" :> |
+:]

@@ -1,4 +1,3 @@
-; MedLang Three-Address Code
 begin_func greet
     param "Hello, %s!\n"
     param name
