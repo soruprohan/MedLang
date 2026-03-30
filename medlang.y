@@ -11,15 +11,13 @@ void yyerror(const char *s);
 int  yylex(void);
 extern int lineno;
 
-/* The root of the entire AST — set by the program rule */
+// The root of the entire AST — set by the program rule 
 ASTNode *ast_root = NULL;
 
 int parse_error_count = 0;
 %}
 
-/* ============================================================
-   Value types
-   ============================================================ */
+
 %union {
     int        ival;
     float      fval;
@@ -29,8 +27,7 @@ int parse_error_count = 0;
     ArgNode   *arg;
 }
 
-/* ============================================================
-   ============================================================ */
+
 %token <ival> INT_LITERAL
 %token <fval> FLOAT_LITERAL
 %token <sval> STRING_LITERAL IDENTIFIER
@@ -56,9 +53,8 @@ int parse_error_count = 0;
 %token SYNAPSE BIOPSY
 %token IN_KW   /* "in" keyword for range loops */
 
-/* ============================================================
-   Non-terminal types
-   ============================================================ */
+
+
 %type <node>  program top_level_list top_level_item
 %type <node>  var_decl sealed_var_decl nosample_decl
 %type <node>  admission_func func_def
@@ -76,9 +72,7 @@ int parse_error_count = 0;
 %type <param> param_list param_list_ne param
 %type <arg>   arg_list arg_list_ne arg named_arg
 
-/* ============================================================
-   Operator precedence (lowest → highest)
-   ============================================================ */
+
 %right ASSIGN
 %left  OR
 %left  AND
@@ -91,9 +85,9 @@ int parse_error_count = 0;
 
 %%
 
-/* ============================================================
-   Program root
-   ============================================================ */
+
+  // Program root
+   
 
 program
     : top_level_list
@@ -124,9 +118,9 @@ top_level_item
     | func_def        { $$ = $1; }
     ;
 
-/* ============================================================
-   Data type — returns the keyword string for the decl node
-   ============================================================ */
+
+  // Data type — returns the keyword string for the decl node
+   
 
 type_spec
     : ORGAN         { $$ = "Organ";         }
@@ -140,9 +134,9 @@ type_spec
     | TISSUE        { $$ = "Tissue";         }
     ;
 
-/* ============================================================
-   Variable declarations
-   ============================================================ */
+
+  // Variable declarations
+   
 
 var_decl
     : type_spec IDENTIFIER SEMICOLON
@@ -165,9 +159,9 @@ nosample_decl
         { $$ = make_decl($2, $3, 0, 1, $5, lineno); }
     ;
 
-/* ============================================================
-   Admission() — program entry point... no return type for this, always void
-   ============================================================ */
+
+ //  Admission() — program entry point... no return type for this, always void
+   
 
 admission_func
     : ADMISSION LPAREN param_list RPAREN LBRACE stmt_list RBRACE
@@ -176,9 +170,9 @@ admission_func
         { $$ = make_func_def("NullTissue", "Admission", $3, NULL, lineno); }
     ;
 
-/* ============================================================
-   User-defined function:  type name <: params :> [: body :]
-   ============================================================ */
+
+  // User-defined function:  type name <: params :> [: body :]
+   
 
 func_def
     : type_spec IDENTIFIER LPAREN param_list RPAREN LBRACE stmt_list RBRACE
@@ -187,9 +181,9 @@ func_def
         { $$ = make_func_def($1, $2, $4, NULL, lineno); }
     ;
 
-/* ============================================================
-   Parameter list
-   ============================================================ */
+
+ //  Parameter list
+   
 
 param_list
     : /* empty */    { $$ = NULL; }
@@ -213,9 +207,9 @@ param
         { $$ = make_param($1, $2, NULL); }
     ;
 
-/* ============================================================
-   Statement list
-   ============================================================ */
+
+  // Statement list
+   
 
 stmt_list
     : stmt
@@ -241,7 +235,7 @@ stmt
     | nosample_decl     { $$ = $1; }
     | block             { $$ = $1; }
     | expr_stmt         { $$ = $1; }
-    /* --- error recovery: skip to next ; and continue --- */
+    /*error recovery*/
     | error SEMICOLON
         {
             yyerrok;
@@ -253,9 +247,9 @@ stmt
         }
     ;
 
-/* ============================================================
-   Block  [: stmt_list :]
-   ============================================================ */
+
+  // Block  [: stmt_list :]
+   
 
 block
     : LBRACE stmt_list RBRACE
@@ -264,18 +258,18 @@ block
         { $$ = make_block(NULL, lineno); }
     ;
 
-/* ============================================================
-   Assignment:  heartRate =: 72 |
-   ============================================================ */
+
+  // Assignment
+   
 
 assign_stmt
     : IDENTIFIER ASSIGN expr SEMICOLON
         { $$ = make_assign($1, $3, lineno); }
     ;
 
-/* ============================================================
-   Discharge (return)
-   ============================================================ */
+
+ //  Discharge (return)
+   
 
 discharge_stmt
     : DISCHARGE expr SEMICOLON
@@ -284,9 +278,9 @@ discharge_stmt
         { $$ = make_return(NULL, lineno); }
     ;
 
-/* ============================================================
-   Diagnose / Alternate  (if / else)
-   ============================================================ */
+
+ //  Diagnose / Alternate  (if / else)
+   
 
 diagnose_stmt
     : DIAGNOSE LPAREN expr RPAREN block
@@ -297,14 +291,13 @@ diagnose_stmt
         { $$ = make_if($3, $5, $7, lineno); }
     ;
 
-/* ============================================================
-   Screening / Result / IdiopathicCase  (switch/case/default)
-   Uses a plain block node for the body
-   ============================================================ */
+
+  // Screening / Result / IdiopathicCase  (switch/case/default)
+   
 
 screening_stmt
     : SCREENING LPAREN expr RPAREN LBRACE case_body RBRACE
-        { $$ = make_if($3, $6, NULL, lineno); /* placeholder */ }
+        { $$ = make_if($3, $6, NULL, lineno); }
     ;
 
 case_body
@@ -319,11 +312,11 @@ case_item
         { $$ = $3; }
     ;
 
-/* ============================================================
-   Cycle  (for)
-   Classic:    Cycle <: init | cond | update :> [: body :]
-   Range-based: Cycle <: i in 1..10 :> [: body :]  (Section 6.5)
-   ============================================================ */
+
+   //Cycle  (for)
+   //Classic:    Cycle <: init | cond | update :> [: body :]
+   //Range-based: Cycle <: i in 1..10 :> [: body :]
+   
 
 cycle_stmt
     /* classic 3-part for */
@@ -352,28 +345,28 @@ for_update
         { $$ = make_assign($1, $3, lineno); }
     ;
 
-/* ============================================================
-   Continuous (while)
-   ============================================================ */
+
+ //  Continuous (while)
+   
 
 continuous_stmt
     : CONTINUOUS LPAREN expr RPAREN block
         { $$ = make_while($3, $5, lineno); }
     ;
 
-/* ============================================================
-   LoadingDose (do-while)
-   LoadingDose [: body :] Continuous <: cond :> |
-   ============================================================ */
+
+  // LoadingDose (do-while)
+   //LoadingDose [: body :] Continuous <: cond :> |
+   
 
 loading_dose_stmt
     : LOADINGDOSE block CONTINUOUS LPAREN expr RPAREN SEMICOLON
         { $$ = make_do_while($2, $5, lineno); }
     ;
 
-/* ============================================================
-   Observe (printf) and Record (scanf)
-   ============================================================ */
+
+  // Observe (printf) and Record (scanf)
+   
 
 observe_stmt
     : OBSERVE_KW LPAREN arg_list RPAREN SEMICOLON
@@ -385,9 +378,9 @@ record_stmt
         { $$ = make_func_call("Record", $3, lineno); }
     ;
 
-/* ============================================================
-   Argument lists (positional and named)
-   ============================================================ */
+
+  // Argument lists
+   
 
 arg_list
     : /* empty */    { $$ = NULL; }
@@ -411,17 +404,17 @@ arg
     ;
 
 named_arg
-    /* named:     patient=: expr  */
+    // named:     patient=: expr
     : IDENTIFIER ASSIGN expr
         { $$ = make_arg($1, $3, NULL); }
-    /* positional */
+    // positional 
     | expr
         { $$ = make_arg(NULL, $1, NULL); }
     ;
 
-/* ============================================================
-   Terminate (break) and FollowUp (continue)
-   ============================================================ */
+
+   //Terminate (break) and FollowUp (continue)
+   
 
 terminate_stmt
     : TERMINATE SEMICOLON
@@ -433,18 +426,18 @@ followup_stmt
         { $$ = make_continue(lineno); }
     ;
 
-/* ============================================================
-   Expression statement
-   ============================================================ */
+
+ //  Expression statement
+   
 
 expr_stmt
     : expr SEMICOLON
         { $$ = $1; }
     ;
 
-/* ============================================================
-   Expressions
-   ============================================================ */
+
+  // Expressions
+   
 
 expr
     : expr PLUS     expr  { $$ = make_binop(PLUS,     $1, $3, lineno); }
@@ -473,9 +466,9 @@ expr
     | NOSAMPLE            { $$ = make_int_lit(0, lineno); }
     ;
 
-/* ============================================================
-   Built-in function calls
-   ============================================================ */
+
+  // Built-in function calls
+   
 
 builtin_call
     : POWER_FN   LPAREN arg_list RPAREN { $$ = make_func_call("Power",     $3, lineno); }
@@ -489,9 +482,9 @@ builtin_call
     | ISCRITICAL LPAREN arg_list RPAREN { $$ = make_func_call("IsCritical",$3, lineno); }
     ;
 
-/* ============================================================
-   User-defined function calls
-   ============================================================ */
+
+ //  User-defined function calls
+   
 
 user_call
     : IDENTIFIER LPAREN arg_list RPAREN
@@ -500,17 +493,17 @@ user_call
 
 %%
 
-/* ============================================================
-   Error handler
-   ============================================================ */
+
+  // Error handler
+   
 void yyerror(const char *s) {
     fprintf(stderr, "[MedLang Error] Line %d: %s\n", lineno, s);
 }
 
 
-/* ============================================================
-   main
-   ============================================================ */
+
+  // main
+   
 int main(int argc, char **argv) {
     extern FILE *yyin;
     if (argc > 1) {
@@ -521,12 +514,12 @@ int main(int argc, char **argv) {
         }
     }
 
-    /* Syntax Analysis */
+    // Syntax Analysis 
     int parse_result = yyparse();
     if (parse_result != 0)
         return parse_result;
 
-    /* Check if errors were recovered during parsing */
+    // Check if errors were recovered during parsing 
     if (parse_error_count > 0) {
         fprintf(stderr, "[MedLang] %d parse error(s) found. Compilation aborted.\n", parse_error_count);
         return 1;
@@ -534,7 +527,7 @@ int main(int argc, char **argv) {
 
     printf("[MedLang] Parse completed successfully.\n");
 
-    /* Semantic Analysis */
+    // Semantic Analysis
     if (ast_root) {
         int sem_result = analyze_program(ast_root);
         if (sem_result != 0) {
@@ -543,7 +536,7 @@ int main(int argc, char **argv) {
         }
     }
 
-    /* AST Interpreter */  
+    // AST Interpreter
     if (ast_root) {
         printf("[MedLang] Starting interpreter...\n");
         interp_run(ast_root);

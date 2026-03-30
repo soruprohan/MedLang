@@ -1,14 +1,12 @@
-/* symtable.c — MedLang Symbol Table implementation
-*/
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "symtable.h"
 
-/* ============================================================
-   scope_new — allocate a fresh scope with a given parent
-   ============================================================ */
+
+  // scope_new — allocate a fresh scope with a given parent
+   
 Scope *scope_new(Scope *parent) {
     Scope *s = (Scope *)malloc(sizeof(Scope));
     if (!s) { fprintf(stderr, "[symtable] out of memory\n"); exit(1); }
@@ -17,9 +15,7 @@ Scope *scope_new(Scope *parent) {
     return s;
 }
 
-/* ============================================================
-   scope_free — release only this scope's symbols (not parents)
-   ============================================================ */
+  // scope_free — release only this scope's symbols (not parents)
 void scope_free(Scope *s) {
     if (!s) return;
     Symbol *cur = s->symbols;
@@ -33,9 +29,9 @@ void scope_free(Scope *s) {
     free(s);
 }
 
-/* ============================================================
-   scope_lookup_local — search current scope only
-   ============================================================ */
+
+ //  scope_lookup_local — search current scope only
+   
 Symbol *scope_lookup_local(Scope *s, const char *name) {
     if (!s) return NULL;
     for (Symbol *sym = s->symbols; sym; sym = sym->next)
@@ -44,9 +40,9 @@ Symbol *scope_lookup_local(Scope *s, const char *name) {
     return NULL;
 }
 
-/* ============================================================
-   scope_lookup — walk the scope chain upward
-   ============================================================ */
+
+ //  scope_lookup — walk the scope chain upward
+   
 Symbol *scope_lookup(Scope *s, const char *name) {
     for (Scope *cur = s; cur; cur = cur->parent) {
         Symbol *sym = scope_lookup_local(cur, name);
@@ -55,11 +51,12 @@ Symbol *scope_lookup(Scope *s, const char *name) {
     return NULL;
 }
 
-/* ============================================================
+/*
    scope_add — add a new symbol to THIS scope
    Returns  0  on success
    Returns -1  if the name already exists in THIS scope
-   ============================================================ */
+   */
+   
 int scope_add(Scope *s, const char *name, const char *type,
               int is_sealed, int is_nosample, int lineno) {
     if (scope_lookup_local(s, name))
@@ -79,9 +76,9 @@ int scope_add(Scope *s, const char *name, const char *type,
     return 0;
 }
 
-/* ============================================================
-   scope_mark_init — flip the initialized flag
-   ============================================================ */
+
+  // scope_mark_init — flip the initialized flag
+   
 void scope_mark_init(Scope *s, const char *name) {
     Symbol *sym = scope_lookup(s, name);
     if (sym) sym->initialized = 1;

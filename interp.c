@@ -1,7 +1,3 @@
-/* interp.c -AST Interpreter
-   Executes the program directly from the AST.
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -76,7 +72,7 @@ static void collect_funcs(ASTNode *n) {
 }
 
 /* ================================================================
-   Signal (break / continue / return propagation)
+   Signal (break / continue / return)
    ================================================================ */
 typedef enum { SIG_NONE, SIG_BREAK, SIG_CONTINUE, SIG_RETURN } Sig;
 typedef struct { Sig sig; Val val; } Res;
@@ -94,8 +90,7 @@ static Res exec (ASTNode *n, Env *e);
 static Res stmts(ASTNode *n, Env *e);
 
 /* ================================================================
-   Print a string processing backslash escape sequences.
-   (The lexer strips quotes but leaves \n etc. as two chars.)
+    string processing for backlash
    ================================================================ */
 static void print_esc(const char *s) {
     for (; *s; s++) {
@@ -113,7 +108,7 @@ static void print_esc(const char *s) {
 }
 
 /* ================================================================
-   Observe (printf): first arg is format string or bare value.
+   Observe (printf)
    ================================================================ */
 static void do_observe(ASTNode *n, Env *e) {  //here a function call node is passed in
     ArgNode *a = n->call.args;
@@ -272,7 +267,7 @@ static Val eval(ASTNode *n, Env *e) {
 }
 
 /* ================================================================
-   Statement list walker (left-recursive NODE_STMT_LIST)
+   Statement list walker
    ================================================================ */
 static Res stmts(ASTNode *n, Env *e) {
     if (!n) return R_NONE;
@@ -384,7 +379,7 @@ int interp_run(ASTNode *root) {
     ASTNode *admission = flookup("Admission");
     if (!admission) { fprintf(stderr,"[interp] no Admission function\n"); return 1; }
 
-    /* Execute global decls; FUNC_DEF nodes silently return R_NONE */
+    /* Execute global decls; FUNC_DEF nodes return R_NONE */
     Env *global = env_push(NULL);
     stmts(root->binop.left, global);
 
@@ -392,7 +387,6 @@ int interp_run(ASTNode *root) {
     printf("[MedLang] --- Program Output ---\n");
     Res r = stmts(admission->func.body, es);
     printf("\n[MedLang] --- Execution Complete ---\n");
-    //if (r.sig == SIG_RETURN) printf("[MedLang] Admission returned: %g\n", r.val.num);
 
     env_pop(es);
     env_pop(global);

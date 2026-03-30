@@ -1,5 +1,4 @@
 /* semantic.c — MedLang Semantic Analysis
-   Phase 3: Semantic Analysis
 
    Checks implemented:
      1. Double declaration in same scope
@@ -20,15 +19,15 @@
 #include "semantic.h"
 #include "medlang.tab.h"
 
-/* ============================================================
-   Global counters
-   ============================================================ */
+
+  // Global counters
+   
 int sem_error_count = 0;
 int sem_warn_count  = 0;
 
-/* ============================================================
-   Internal helpers: emit error / warning
-   ============================================================ */
+
+   //Internal helpers: emit error / warning
+   
 static void sem_error(int line, const char *fmt, ...) {
     va_list ap;
     fprintf(stderr, "[Semantic Error] Line %d: ", line);
@@ -49,9 +48,9 @@ static void sem_warn(int line, const char *fmt, ...) {
     sem_warn_count++;
 }
 
-/* ============================================================
-   Type compatibility table, Return 1 (true) = compatible, Return 0 (false) = incompatible
-   ============================================================ */
+
+  // Type compatibility table, Return 1 (true) = compatible, Return 0 (false) = incompatible
+   
 static int types_compatible(const char *lhs, const char *rhs) {
     if (!lhs || !rhs) return 1;
     if (strcmp(lhs, rhs) == 0) return 1;
@@ -81,9 +80,9 @@ static int types_compatible(const char *lhs, const char *rhs) {
     return 0;
 }
 
-/* ============================================================
-   Infer the result type of an expression node.
-   ============================================================ */
+
+ //  Infer the result type of an expression node.
+   
 static const char *infer_type(ASTNode *node, Scope *scope) {
     if (!node) return NULL;
 
@@ -144,16 +143,16 @@ static const char *infer_type(ASTNode *node, Scope *scope) {
     }
 }
 
-/* ============================================================
-   Forward declaration
-   ============================================================ */
+
+ //  Forward declaration
+   
 static void analyze(ASTNode *node, Scope *scope,
                     const char *enclosing_ret_type,
                     int *has_return);
 
-/* ============================================================
-   Core recursive analysis walker
-   ============================================================ */
+
+  // Core recursive analysis walker
+   
 static void analyze(ASTNode *node, Scope *scope,
                     const char *enclosing_ret_type,
                     int *has_return) {
@@ -161,25 +160,25 @@ static void analyze(ASTNode *node, Scope *scope,
 
     switch (node->type) {
 
-    /* ---- Program root ---- */
+    //  Program root
     case NODE_PROGRAM:
         analyze(node->binop.left, scope, enclosing_ret_type, has_return);
         break;
 
-    /* ---- Statement list ---- */
+    //  Statement list
     case NODE_STMT_LIST: {
         ASTNode *cur = node;
-        //This iterates through each statement one by one, analyzing them in order. 
+        // This iterates through each statement one by one, analyzing them in order 
         while (cur && cur->type == NODE_STMT_LIST) {
             analyze(cur->list.head, scope, enclosing_ret_type, has_return);
             cur = cur->list.tail;
         }
-        //This final if (cur) handles the last node which isn't a NODE_STMT_LIST itself.
+        // This final if (cur) handles the last node which isn't a NODE_STMT_LIST itself
         if (cur) analyze(cur, scope, enclosing_ret_type, has_return);
         break;
     }
 
-    /* ---- Variable declaration ---- */
+    //  Variable declaration
     case NODE_DECL: {
         const char *vname = node->decl.name;
         const char *vtype = node->decl.datatype;
@@ -196,7 +195,7 @@ static void analyze(ASTNode *node, Scope *scope,
             analyze(node->decl.init, scope, enclosing_ret_type, has_return);
 
             const char *rhs_type = infer_type(node->decl.init, scope);
-            //if the initializer's type is known, check compatibility with the declared type. If incompatible, report a type error.
+            // if the initializer's type is known, check compatibility with the declared type. If incompatible, report a type error.
             if (rhs_type && !types_compatible(vtype, rhs_type)) {
                 sem_error(node->lineno,
                     "cannot assign %s value to %s variable '%s'",
@@ -208,7 +207,7 @@ static void analyze(ASTNode *node, Scope *scope,
         break;
     }
 
-    /* ---- NoSample declaration — treated as a plain declaration ---- */
+    //  NoSample declaration — treated as a plain declaration
     case NODE_NOSAMPLE_DECL: {
         const char *vname = node->decl.name;
         const char *vtype = node->decl.datatype;
@@ -220,7 +219,7 @@ static void analyze(ASTNode *node, Scope *scope,
         break;
     }
 
-    /* ---- Assignment ---- */
+    //  Assignment
     case NODE_ASSIGN: {
         const char *vname = node->assign.name;
         Symbol *sym = scope_lookup(scope, vname);
@@ -228,12 +227,12 @@ static void analyze(ASTNode *node, Scope *scope,
         if (!sym) {
             sem_error(node->lineno,
                       "'%s' used before declaration", vname);
-             //still analyze the RHS to catch any errors there, even though the LHS variable is undeclared
+             // still analyze the RHS to catch any errors there, even though the LHS variable is undeclared
             analyze(node->assign.expr, scope, enclosing_ret_type, has_return);
             break;
         }
 
-        //immutable (Sealed) variables cannot be reassigned after initialization. If the variable is Sealed and already initialized, report an error.
+        // immutable (Sealed) variables cannot be reassigned after initialization. If the variable is Sealed and already initialized, report an error.
         if (sym->is_sealed && sym->initialized) {
             sem_error(node->lineno,
                       "'%s' is Sealed and cannot be reassigned", vname);
@@ -241,7 +240,7 @@ static void analyze(ASTNode *node, Scope *scope,
 
         analyze(node->assign.expr, scope, enclosing_ret_type, has_return);
 
-        //Check for type compatibility between the variable's declared type and the type of the expression being assigned to it
+        // Check for type compatibility between the variable's declared type and the type of the expression being assigned to it
         const char *rhs_type = infer_type(node->assign.expr, scope);
         if (rhs_type && !types_compatible(sym->type, rhs_type)) {
             sem_error(node->lineno,
@@ -253,7 +252,7 @@ static void analyze(ASTNode *node, Scope *scope,
         break;
     }
 
-    /* ---- Identifier reference ---- */
+    //  Identifier reference
     case NODE_IDENT: {
         const char *vname = node->sval;
         if (!scope_lookup(scope, vname)) {
@@ -263,7 +262,7 @@ static void analyze(ASTNode *node, Scope *scope,
         break;
     }
 
-    /* ---- If / Else (Diagnose / Alternate) ---- */
+    //  If / Else (Diagnose / Alternate)
     case NODE_IF: {
         analyze(node->ifnode.cond, scope, enclosing_ret_type, has_return);
 
@@ -286,10 +285,10 @@ static void analyze(ASTNode *node, Scope *scope,
         break;
     }
 
-    /* ---- While loop (Continuous) ---- */
+    //  While loop (Continuous)
     case NODE_WHILE: {
-        //condition belongs to the outer scope, but the body of the loop gets its own inner scope
-        // (since variables declared inside the loop body shouldn't be visible outside the loop)
+        // condition belongs to the outer scope, but the body of the loop gets its own inner scope
+        // since variables declared inside the loop body shouldn't be visible outside the loop
         analyze(node->loop.cond, scope, enclosing_ret_type, has_return);
         Scope *loop_scope = scope_new(scope);
         int loop_ret = 0;
@@ -298,7 +297,7 @@ static void analyze(ASTNode *node, Scope *scope,
         break;
     }
 
-    /* ---- Do-while loop (LoadingDose) ---- */
+    //  Do-while loop (LoadingDose)
     case NODE_DO_WHILE: {
         Scope *loop_scope = scope_new(scope);
         int loop_ret = 0;
@@ -308,11 +307,11 @@ static void analyze(ASTNode *node, Scope *scope,
         break;
     }
 
-    /* ---- Classic for loop (Cycle 3-part) ---- */
+    //  Classic for loop (Cycle 3-part)
     case NODE_FOR: {
         Scope *for_scope = scope_new(scope);
         int for_ret = 0;
-        //everything in the for loop header (init, condition, update) is analyzed within the same scope as the loop body
+        // everything in the for loop header (init, condition, update) is analyzed within the same scope as the loop body
         analyze(node->forloop.init,   for_scope, enclosing_ret_type, &for_ret);
         analyze(node->forloop.cond,   for_scope, enclosing_ret_type, &for_ret);
         analyze(node->forloop.update, for_scope, enclosing_ret_type, &for_ret);
@@ -321,7 +320,7 @@ static void analyze(ASTNode *node, Scope *scope,
         break;
     }
 
-    /* ---- Range-based for (Cycle <: i in 1 .. 10 :>) ---- */
+    //  Range-based for (Cycle <: i in 1 .. 10 :>)
     case NODE_FOR_RANGE: {
         int from = node->range_loop.from;
         int to   = node->range_loop.to;
@@ -333,7 +332,7 @@ static void analyze(ASTNode *node, Scope *scope,
         }
 
         Scope *range_scope = scope_new(scope);
-        //automatically injects the loop variable into the range scope as type "Organ" (int) and marks it initialized,
+        // automatically injects the loop variable into the range scope as type "Organ" (int) and marks it initialized,
         // since it's implicitly declared by the loop syntax
         scope_add(range_scope, node->range_loop.var, "Organ",
                   0, 0, node->lineno);
@@ -346,7 +345,7 @@ static void analyze(ASTNode *node, Scope *scope,
         break;
     }
 
-    /* ---- Block [: ... :] ---- */
+    //  Block [: ... :]
     case NODE_BLOCK: {
         Scope *block_scope = scope_new(scope);
         int block_ret = 0;
@@ -356,7 +355,7 @@ static void analyze(ASTNode *node, Scope *scope,
         break;
     }
 
-    /* ---- Function definition ---- */
+    //  Function definition
     case NODE_FUNC_DEF: {
         const char *fname    = node->func.name;
         const char *ret_type = node->func.ret_type;
@@ -380,12 +379,12 @@ static void analyze(ASTNode *node, Scope *scope,
         }
 
         int fn_has_return = 0;
-        //The body is recursively analyzed, passing ret_type down and &fn_has_return to be written into
+        // The body is recursively analyzed, passing ret_type down and &fn_has_return to be written into
         analyze(node->func.body, fn_scope, ret_type, &fn_has_return);
         scope_free(fn_scope);
 
-        //the missing return check: if the function declared a non-void return type but 
-        //no guaranteed Discharge was found anywhere in the body, that's a semantic error
+        // the missing return check: if the function declared a non-void return type but 
+        // no guaranteed Discharge was found anywhere in the body, that's a semantic error
 
         if (ret_type &&
             strcmp(ret_type, "NullTissue") != 0 &&
@@ -397,20 +396,20 @@ static void analyze(ASTNode *node, Scope *scope,
         break;
     }
 
-    /* ---- Function call ---- */
+    //  Function call
     case NODE_FUNC_CALL: {
-        /* Recurse into arguments only — function existence is guaranteed
-           by the interpreter's collect_funcs() pre-pass */
+        // Recurse into arguments only — function existence is guaranteed
+        // by the interpreter's collect_funcs() pre-pass
         for (ArgNode *a = node->call.args; a; a = a->next)
             analyze(a->expr, scope, enclosing_ret_type, has_return);
         break;
     }
 
-    /* ---- Return (Discharge) ---- */
+    //  Return (Discharge)
     case NODE_RETURN: {
         if (has_return) *has_return = 1;
 
-        //binop.left null in return means only Discharge without an expression,
+        // binop.left null in return means only Discharge without an expression,
         // which is only valid if the enclosing function has a void (NullTissue) return type.
         if (!node->binop.left) {
             if (enclosing_ret_type &&
@@ -436,7 +435,7 @@ static void analyze(ASTNode *node, Scope *scope,
         break;
     }
 
-    /* ---- Break / Continue / literals ---- */
+    //  Break / Continue / literals
     case NODE_BREAK:
     case NODE_CONTINUE:
     case NODE_INT_LIT:
@@ -444,7 +443,7 @@ static void analyze(ASTNode *node, Scope *scope,
     case NODE_STRING_LIT:
         break;
 
-    /* ---- Binary / unary ops ---- */
+    //  Binary / unary ops
     case NODE_BINOP:
         analyze(node->binop.left,  scope, enclosing_ret_type, has_return);
         analyze(node->binop.right, scope, enclosing_ret_type, has_return);
@@ -458,11 +457,11 @@ static void analyze(ASTNode *node, Scope *scope,
         break;
 
     } 
-} /* end analyze() */
+}
 
-/* ============================================================
-   Public entry point
-   ============================================================ */
+
+ //  Public entry point
+   
 int analyze_program(ASTNode *root) {
     sem_error_count = 0;
     sem_warn_count  = 0;

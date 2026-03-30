@@ -1,14 +1,10 @@
-/* ast.c — AST constructor implementations
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "ast.h"
 
-/* ============================================================
-   Internal helper: allocate a zeroed node
-   ============================================================ */
+
+   //Internal helper: allocate a zeroed node
 static ASTNode *new_node(NodeType t, int line) {
     ASTNode *n = calloc(1, sizeof(ASTNode));
     if (!n) { fprintf(stderr, "Out of memory\n"); exit(1); }
@@ -17,9 +13,8 @@ static ASTNode *new_node(NodeType t, int line) {
     return n;
 }
 
-/* ============================================================
-   Literals
-   ============================================================ */
+
+//   Literals
 ASTNode *make_int_lit(int v, int line) {
     ASTNode *n = new_node(NODE_INT_LIT, line);
     n->ival = v;
@@ -44,9 +39,8 @@ ASTNode *make_ident(char *name, int line) {
     return n;
 }
 
-/* ============================================================
-   Operators
-   ============================================================ */
+
+//   Operators
 ASTNode *make_binop(int op, ASTNode *left, ASTNode *right, int line) {
     ASTNode *n = new_node(NODE_BINOP, line);
     n->binop.op    = op;
@@ -63,9 +57,9 @@ ASTNode *make_unop(int op, ASTNode *operand, int line) {
     return n;
 }
 
-/* ============================================================
-   Variable declaration
-   ============================================================ */
+
+  // Variable declaration
+    
 ASTNode *make_decl(char *type, char *name,
                    int is_sealed, int is_nosample,
                    ASTNode *init, int line) {
@@ -78,9 +72,8 @@ ASTNode *make_decl(char *type, char *name,
     return n;
 }
 
-/* ============================================================
-   Assignment
-   ============================================================ */
+   //Assignment
+    
 ASTNode *make_assign(char *name, ASTNode *expr, int line) {
     ASTNode *n = new_node(NODE_ASSIGN, line);
     n->assign.name = name;
@@ -88,9 +81,8 @@ ASTNode *make_assign(char *name, ASTNode *expr, int line) {
     return n;
 }
 
-/* ============================================================
-   Control flow
-   ============================================================ */
+ 
+   //Control flow
 ASTNode *make_if(ASTNode *cond, ASTNode *then_b,
                   ASTNode *else_b, int line) {
     ASTNode *n = new_node(NODE_IF, line);
@@ -134,9 +126,9 @@ ASTNode *make_range_loop(char *var, int from, int to,
     return n;
 }
 
-/* ============================================================
-   Functions
-   ============================================================ */
+
+ //  Functions
+
 ASTNode *make_func_def(char *ret_type, char *name,
                         ParamNode *params, ASTNode *body, int line) {
     ASTNode *n = new_node(NODE_FUNC_DEF, line);
@@ -170,12 +162,11 @@ ArgNode *make_arg(char *label, ASTNode *expr, ArgNode *next) {
     return a;
 }
 
-/* ============================================================
-   Statements
-   ============================================================ */
+
+//   Statements
 ASTNode *make_return(ASTNode *expr, int line) {
     ASTNode *n = new_node(NODE_RETURN, line);
-    n->binop.left = expr; /* reuse left slot for the single child */
+    n->binop.left = expr;
     return n;
 }
 
@@ -189,13 +180,12 @@ ASTNode *make_continue(int line) {
 
 ASTNode *make_block(ASTNode *stmts, int line) {
     ASTNode *n = new_node(NODE_BLOCK, line);
-    n->binop.left = stmts; /* single child */
+    n->binop.left = stmts;
     return n;
 }
 
-/* ============================================================
-   Statement list  (right-linear: head → tail chain)
-   ============================================================ */
+
+//   Statement list
 ASTNode *make_stmt_list(ASTNode *head, ASTNode *tail) {
     ASTNode *n = new_node(NODE_STMT_LIST, 0);
     n->list.head = head;
@@ -203,9 +193,9 @@ ASTNode *make_stmt_list(ASTNode *head, ASTNode *tail) {
     return n;
 }
 
-/* ============================================================
-   Program root
-   ============================================================ */
+
+ //  Program root
+  
 ASTNode *make_program(ASTNode *stmts) {
     ASTNode *n = new_node(NODE_PROGRAM, 0);
     n->binop.left = stmts;
