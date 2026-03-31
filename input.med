@@ -1,0 +1,222 @@
+## ============================================================
+## input.med — Complete MedLang Language Showcase
+## ============================================================
+
+#+ Multi-line comment example.
+   Everything here is ignored. +#
+
+## --- User-defined functions ---
+
+Organ factorial <: Organ n :> [:
+    Diagnose <: n MinSafe 1 :> [:
+        Discharge 1 |
+    :]
+    Discharge n DoseMultiply factorial <: n DoseMinus 1 :> |
+:]
+
+Flow celsiusToFahr <: Flow c :> [:
+    Discharge c DoseMultiply 9 DoseDivide 5 DosePlus 32 |
+:]
+
+NullTissue greet <: Tissue name :> [:
+    Observe <: "Hello, %s!\n", name :> |
+:]
+
+Tissue getStatus <: Organ code :> [:
+    Diagnose <: code Match 1 :> [:
+        Discharge "Critical" |
+    :]
+    Diagnose <: code Match 2 :> [:
+        Discharge "Stable" |
+    :]
+    Discharge "Unknown" |
+:]
+
+Organ doubleVal <: Organ n :> [:
+    Discharge n DoseMultiply 2 |
+:]
+
+Organ quadrupleVal <: Organ n :> [:
+    Discharge doubleVal <: doubleVal <: n :> :> |
+:]
+
+## --- Main entry point ---
+
+Admission <: :> [:
+
+    ## All data types
+    Organ       age         =: 25 |
+    Flow        weight      =: 72.5 |
+    Diabetes    height      =: 1.75 |
+    Cell        initial     =: 'M' |
+    MajorOrgan  bigNum      =: 1000000 |
+    MinorOrgan  smallNum    =: 5 |
+    NonPathologic posNum    =: 255 |
+    Tissue      patientName =: "Ali Khan" |
+
+    Observe <: "Age: %d, Weight: %f, Height: %f\n", age, weight, height :> |
+    Observe <: "Initial: %c, Patient: %s\n", initial, patientName :> |
+    Observe <: "Big: %d, Small: %d, Pos: %d\n", bigNum, smallNum, posNum :> |
+
+    ## Sealed (const) and NoSample (nullable)
+    Sealed Organ MAX_DOSE =: 500 |
+    Sealed Flow PI =: 3.14159 |
+    NoSample Organ optionalVal =: 10 |
+    Observe <: "MAX_DOSE: %d, PI: %f, Optional: %d\n", MAX_DOSE, PI, optionalVal :> |
+
+    ## Uninitialized then assigned
+    Organ temp |
+    temp =: 42 |
+
+    ## Arithmetic operators
+    Organ a =: 20 |
+    Organ b =: 7 |
+    Observe <: "%d+%d=%d\n", a, b, a DosePlus b :> |
+    Observe <: "%d-%d=%d\n", a, b, a DoseMinus b :> |
+    Observe <: "%d*%d=%d\n", a, b, a DoseMultiply b :> |
+    Observe <: "%d/%d=%d\n", a, b, a DoseDivide b :> |
+    Observe <: "%d%%%d=%d\n", a, b, a DoseMod b :> |
+    Organ neg =: DoseMinus 42 |
+    Observe <: "Unary minus: %d\n", neg :> |
+
+    ## Relational operators
+    Observe <: "GT:%d LT:%d GEQ:%d LEQ:%d EQ:%d NEQ:%d\n",
+        a AboveNormal b, a BelowNormal b,
+        a MaxSafe b, a MinSafe b,
+        a Match b, a MisMatch b :> |
+
+    ## Logical operators: Both (AND), Either (OR), Negate (NOT)
+    Organ fever =: 0 |
+    Organ highBP =: 1 |
+    Observe <: "Both:%d Either:%d Negate:%d\n",
+        highBP Both fever, highBP Either fever, Negate fever :> |
+
+    ## Diagnose / Alternate (if / else-if / else)
+    Organ marks =: 78 |
+    Diagnose <: marks MaxSafe 90 :> [:
+        Observe <: "Grade: A\n" :> |
+    :] Alternate Diagnose <: marks MaxSafe 70 :> [:
+        Observe <: "Grade: B\n" :> |
+    :] Alternate [:
+        Observe <: "Grade: C\n" :> |
+    :]
+
+    ## Nested if
+    Organ hr =: 110 |
+    Diagnose <: hr AboveNormal 100 :> [:
+        Organ severity =: 0 |
+        Diagnose <: hr AboveNormal 150 :> [:
+            severity =: 2 |
+        :] Alternate [:
+            severity =: 1 |
+        :]
+        Observe <: "Tachycardia severity: %d\n", severity :> |
+    :]
+
+    ## Screening / Result / IdiopathicCase (switch/case/default)
+    Organ ward =: 2 |
+    Screening <: ward :> [:
+        Result 1 |
+            Observe <: "Emergency\n" :> |
+            Terminate |
+        Result 2 |
+            Observe <: "ICU\n" :> |
+            Terminate |
+        IdiopathicCase |
+            Observe <: "General\n" :> |
+            Terminate |
+    :]
+
+    ## Continuous (while loop)
+    Organ count =: 1 |
+    Continuous <: count MinSafe 5 :> [:
+        Observe <: "%d ", count :> |
+        count =: count DosePlus 1 |
+    :]
+    Observe <: "\n" :> |
+
+    ## Cycle — classic for loop
+    Organ idx =: 0 |
+    Cycle <: idx =: 0 | idx BelowNormal 5 | idx =: idx DosePlus 1 :> [:
+        Observe <: "i=%d ", idx :> |
+    :]
+    Observe <: "\n" :> |
+
+    ## Cycle — range-based for
+    Organ total =: 0 |
+    Cycle <: k in 1 .. 10 :> [:
+        total =: total DosePlus k |
+    :]
+    Observe <: "Sum 1..10 = %d\n", total :> |
+
+    ## LoadingDose ... Continuous (do-while)
+    Organ attempt =: 1 |
+    LoadingDose [:
+        Observe <: "Attempt #%d\n", attempt :> |
+        attempt =: attempt DosePlus 1 |
+    :] Continuous <: attempt MinSafe 3 :> |
+
+    ## Terminate (break) and FollowUp (continue)
+    Organ num =: 1 |
+    Continuous <: num MinSafe 10 :> [:
+        Diagnose <: num Match 7 :> [:
+            Terminate |
+        :]
+        Diagnose <: num DoseMod 2 Match 0 :> [:
+            num =: num DosePlus 1 |
+            FollowUp |
+        :]
+        Observe <: "Odd: %d\n", num :> |
+        num =: num DosePlus 1 |
+    :]
+
+    ## Function calls
+    Organ fact =: factorial <: 5 :> |
+    Observe <: "5! = %d\n", fact :> |
+    Flow tempF =: celsiusToFahr <: 37.0 :> |
+    Observe <: "37C = %fF\n", tempF :> |
+    Organ quad =: quadrupleVal <: 3 :> |
+    Observe <: "quadruple(3) = %d\n", quad :> |
+
+    ## String functions
+    greet <: "Bob" :> |
+    Tissue status =: getStatus <: 1 :> |
+    Observe <: "Status: %s\n", status :> |
+
+    ## Built-in math
+    Observe <: "Power(2,10) = %f\n", Power <: 2, 10 :> :> |
+    Observe <: "Sqrt(144)   = %f\n", RootCause <: 144 :> :> |
+    Observe <: "Abs(-37.5)  = %f\n", AbsDose <: DoseMinus 37.5 :> :> |
+    Observe <: "Floor(4.7)  = %f\n", RoundDown <: 4.7 :> :> |
+    Observe <: "Ceil(4.7)   = %f\n", RoundUp <: 4.7 :> :> |
+
+    ## Trigonometric functions
+    Flow angle =: PI DoseDivide 4 |
+    Observe <: "Sin(PI/4)=%f Cos=%f Tan=%f\n",
+        Sine <: angle :>, Cosine <: angle :>, Tangent <: angle :> :> |
+
+    ## IsCritical
+    Organ crit =: IsCritical <: 160, 100 :> |
+    Observe <: "IsCritical(160,100) = %d\n", crit :> |
+
+    ## Pythagorean (combining built-ins)
+    Flow hyp =: RootCause <: Power <: 3, 2 :> DosePlus Power <: 4, 2 :> :> |
+    Observe <: "Hypotenuse(3,4) = %f\n", hyp :> |
+
+    ## Parenthesized expressions
+    Organ e1 =: <: 2 DosePlus 3 :> DoseMultiply 4 |
+    Organ e2 =: 2 DosePlus <: 3 DoseMultiply 4 :> |
+    Observe <: "(2+3)*4=%d vs 2+(3*4)=%d\n", e1, e2 :> |
+
+    ## NoSample as a value
+    Organ nul =: NoSample |
+    Observe <: "NoSample = %d\n", nul :> |
+
+    ## Block scope
+    [:
+        Organ scoped =: 99 |
+        Observe <: "Block scoped: %d\n", scoped :> |
+    :]
+
+    Observe <: "\n=== ALL FEATURES DEMONSTRATED ===\n" :> |
+:]

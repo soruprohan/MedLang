@@ -1,0 +1,6 @@
+Admission<: :>[:
+    Organ age=: 25|
+    Organ name=: 34|
+    Organ result=: age DosePlus name|
+    Observe <:"sum %d\n", result:>|
+:]

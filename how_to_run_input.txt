@@ -1,0 +1,5 @@
+./medlang.exe input.med
+
+run this in the powershell to execute input.med
+
+(or you can run other files from samples folder by <--- ./medlang.exe samples/file_name.med --->this command)
